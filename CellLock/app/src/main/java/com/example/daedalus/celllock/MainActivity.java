@@ -295,13 +295,15 @@ public class MainActivity extends Activity {
             Toast.makeText(getApplicationContext(),"You MUST connect to get on protection mode",Toast.LENGTH_LONG).show();
 
         }
-        else{
-            Toast.makeText(getApplicationContext(),"Protection Mode Enabled",Toast.LENGTH_LONG).show();
+        else if(state==CONNECTED_STATE){
             state = PROTECTED_STATE;
+            Toast.makeText(getApplicationContext(),"Protection Mode Enabled",Toast.LENGTH_LONG).show();
+
             // start discovery mode
             startDiscovery();
-
-
+        }
+        else if(state==PROTECTED_STATE){
+            Toast.makeText(getApplicationContext(),"You are in protection mode",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -448,7 +450,7 @@ public class MainActivity extends Activity {
             String outputString=null;
             if(isBluetoothAvailable()) {
                 outputString = connectedThread.read(buffer);
-            }else{
+            }else if(state==CONNECTED_STATE){
                 Toast.makeText(context, "Error: Not Connected", Toast.LENGTH_LONG).show();
             }
             return outputString;
