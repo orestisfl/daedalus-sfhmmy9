@@ -15,9 +15,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -42,11 +44,16 @@ public class MainActivity extends Activity {
     private static final int  INIT_STATE = 5;
     private static final int CONNECTED_STATE = 6;
     private static final int PROTECTED_STATE = 7;
-    private static final String CONNECTED_DEVICE_NAME ="ERCOMACTE";
+    private static final int FINDARDUINO_STATE = 8;
+    public int prevState = 0;
+
+    private static final String CONNECTED_DEVICE_NAME ="Peinaw";
     private static final String DISCOVERY_DEVICE_NAME ="Orestis";
     private BluetoothDevice connectionDevice;
     private BluetoothDevice discoveryDevice;
     private ConnectedThread connectedThread;
+
+    TextView textView;
     String tag = "debugging";
 
 
@@ -66,23 +73,15 @@ public class MainActivity extends Activity {
 
 
                     connectedThread = new ConnectedThread((BluetoothSocket)msg.obj);
-                    Toast.makeText(getApplicationContext(), "CONNECT", Toast.LENGTH_SHORT).show();
-
+                    textView.setText("CONNECTED");
                     // State changes to Connected State;
-                    state = CONNECTED_STATE;
+
+
+                    changeState(CONNECTED_STATE);
 
                     //Check thn malakia mas
 
-                    String t = "1";
-                    connectedThread.write(t.getBytes());
-                    try {
-                        Thread.sleep(4000);
-                        t = "0";
-                        connectedThread.write(t.getBytes());
-                    }
-                    catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+
 
                     break;
                 case MESSAGE_READ:
@@ -100,6 +99,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        textView = (TextView)findViewById(R.id.debuggText);
         init();
         if(btAdapter==null){
             Toast.makeText(getApplicationContext(), "No bluetooth detected", Toast.LENGTH_SHORT).show();
@@ -139,53 +139,6 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void renderToProtected()
-    {
-        ImageView imgShield=(ImageView)findViewById(R.id.imageViewShield);
-        ImageView imgDanger=(ImageView)findViewById(R.id.imageViewDanger);
-        ImageView imgWarning=(ImageView)findViewById(R.id.imageViewWarning);
-        ImageView imgBell=(ImageView)findViewById(R.id.imageViewBell);
-        imgBell.setVisibility(ImageView.INVISIBLE);
-        imgWarning.setVisibility(ImageView.INVISIBLE);
-        imgDanger.setVisibility(ImageView.INVISIBLE);
-        imgShield.setVisibility(ImageView.VISIBLE);
-    }
-    public void renderToDanger()
-    {
-        ImageView imgShield=(ImageView)findViewById(R.id.imageViewShield);
-        ImageView imgDanger=(ImageView)findViewById(R.id.imageViewDanger);
-        ImageView imgWarning=(ImageView)findViewById(R.id.imageViewWarning);
-        ImageView imgBell=(ImageView)findViewById(R.id.imageViewBell);
-        imgWarning.setVisibility(ImageView.INVISIBLE);
-        imgBell.setVisibility(ImageView.INVISIBLE);
-        imgShield.setVisibility(ImageView.INVISIBLE);
-        imgDanger.setVisibility(ImageView.VISIBLE);
-
-    }
-    public void renderToWarning()
-    {
-        ImageView imgShield=(ImageView)findViewById(R.id.imageViewShield);
-        ImageView imgDanger=(ImageView)findViewById(R.id.imageViewDanger);
-        ImageView imgWarning=(ImageView)findViewById(R.id.imageViewWarning);
-        ImageView imgBell=(ImageView)findViewById(R.id.imageViewBell);
-        imgBell.setVisibility(ImageView.INVISIBLE);
-        imgDanger.setVisibility(ImageView.INVISIBLE);
-        imgShield.setVisibility(ImageView.INVISIBLE);
-        imgWarning.setVisibility(ImageView.VISIBLE);
-    }
-
-    public void renderToBell()
-    {
-        ImageView imgShield=(ImageView)findViewById(R.id.imageViewShield);
-        ImageView imgDanger=(ImageView)findViewById(R.id.imageViewDanger);
-        ImageView imgWarning=(ImageView)findViewById(R.id.imageViewWarning);
-        ImageView imgBell=(ImageView)findViewById(R.id.imageViewBell);
-        imgWarning.setVisibility(ImageView.INVISIBLE);
-        imgShield.setVisibility(ImageView.INVISIBLE);
-        imgDanger.setVisibility(ImageView.INVISIBLE);
-        imgBell.setVisibility(ImageView.VISIBLE);
-
-    }
 
     // Initialization method
 
@@ -228,9 +181,20 @@ public class MainActivity extends Activity {
                     }
                     else if(state==PROTECTED_STATE){
                         if(device.getName().equals(DISCOVERY_DEVICE_NAME)){
-                            discoveryDevice = device;
-                            Toast.makeText(getApplicationContext()," Discovery device found " , Toast.LENGTH_SHORT).show();
+                            //discoveryDevice = device;
+                           // Toast.makeText(getApplicationContext()," Discovery device found " , Toast.LENGTH_SHORT).show();
                             rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE);
+                            //Send rssi
+
+
+
+                            // Get response
+                            
+
+
+                            // Change state
+
+
                             Toast.makeText(getApplicationContext(), rssi + " dB" , Toast.LENGTH_SHORT).show();
                             btAdapter.cancelDiscovery();
 
@@ -270,8 +234,15 @@ public class MainActivity extends Activity {
     }
 
 
+    private void changeState(int s){
+        prevState = state;
+        state = s;
+        update(s, prevState);
+    }
 
-
+    private void update(int s, int prevState) {
+        // Kirtsio do something
+    }
 
     //Enable bluetooth function
 
@@ -289,14 +260,13 @@ public class MainActivity extends Activity {
 
     }
 
-
     public void protectionButton(View view){
         if(state == INIT_STATE){
             Toast.makeText(getApplicationContext(),"You MUST connect to get on protection mode",Toast.LENGTH_LONG).show();
 
         }
         else if(state==CONNECTED_STATE){
-            state = PROTECTED_STATE;
+            changeState(PROTECTED_STATE);
             Toast.makeText(getApplicationContext(),"Protection Mode Enabled",Toast.LENGTH_LONG).show();
 
             // start discovery mode
@@ -307,9 +277,39 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void ringButton(View view) {
-        renderToBell();
+
+    public void disableProtection(View view){
+        if(state==PROTECTED_STATE){
+            changeState(CONNECTED_STATE);
+            btAdapter.cancelDiscovery();
+            Toast.makeText(getApplicationContext(),"You are not protected anymore",Toast.LENGTH_LONG).show();
+        }
+        else{
+
+        }
     }
+
+    public void ringButton(View view){
+
+        if(state == PROTECTED_STATE || state == CONNECTED_STATE){
+            String s = "RING";
+            connectedThread.write(s.getBytes());
+            changeState(FINDARDUINO_STATE);
+
+        }
+        else if(state == INIT_STATE){
+            textView.clearComposingText();
+            Toast.makeText(getApplicationContext(), "You must Connect first to find your keys", Toast.LENGTH_SHORT).show();
+        }
+        else if(state == FINDARDUINO_STATE){
+            String s = "RSTOP";
+            connectedThread.write(s.getBytes());
+            Toast.makeText(getApplicationContext(), "Congrats you found your fucking keys", Toast.LENGTH_SHORT).show();
+            changeState(prevState);
+        }
+
+    }
+
 
 
 // Code from Android develope bluetooth app
