@@ -39,6 +39,8 @@ public class MainActivity extends Activity {
     protected static final int SUCCESS_CONNECT = 0;
     protected static final int MESSAGE_READ = 1;
     private static final int  INIT_STATE = 5;
+    private static final int CONNECTED_STATE = 6;
+    private static final int PROTECTED_STATE = 7;
     private static final String CONNECTED_DEVICE_NAME ="ERCOMACTE";
     private static final String DISCOVERY_DEVICE_NAME ="Orestis";
     private BluetoothDevice connectionDevice;
@@ -58,16 +60,17 @@ public class MainActivity extends Activity {
                 case SUCCESS_CONNECT:
                     // when you connect to a device restart discovery in order to search for other
                     // devices
-                    btAdapter.startDiscovery();
+
 
 
 
                     connectedThread = new ConnectedThread((BluetoothSocket)msg.obj);
                     Toast.makeText(getApplicationContext(), "CONNECT", Toast.LENGTH_SHORT).show();
-                    String s = "successfully connected";
-                    connectedThread.write(s.getBytes());
 
-                    // Check thn malakia mas
+                    // State changes to Connected State;
+                    state = CONNECTED_STATE;
+
+                    //Check thn malakia mas
 
                     String t = "1";
                     connectedThread.write(t.getBytes());
@@ -80,9 +83,6 @@ public class MainActivity extends Activity {
                         e.printStackTrace();
                     }
 
-
-
-                    //S Log.i(tag, "connected");
                     break;
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[])msg.obj;
@@ -152,27 +152,25 @@ public class MainActivity extends Activity {
         receiver = new BroadcastReceiver(){
             @Override
             public void onReceive(Context context, Intent intent) {
-
+                int rssi;
                 // TODO Auto-generated method stub
                 String action = intent.getAction();
 
                 if(BluetoothDevice.ACTION_FOUND.equals(action)){
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     if(state==INIT_STATE){
-                        Log.i(tag, "MALAKIA");
                         if(device.getName().equals(CONNECTED_DEVICE_NAME)){
-                            Log.i(tag, "MALAKIA1");
 
-                            Log.i(tag, "MALAKIA2");
+
                             connectionDevice = device;
-                            Log.i(tag, "MALAKIA3");
                             Toast.makeText(getApplicationContext()," Device for Connection Found " , Toast.LENGTH_SHORT).show();
 
-                            if(pairedDevices.contains(connectionDevice)){
+                            if(pairedDevices.contains(connectionDevice.getName())){
+
                                 // Start Connection
                                 ConnectThread connect = new ConnectThread(connectionDevice);
                                 connect.start();
-                                Log.i(tag, "MALAKIA4");
+
                             }
                             else{
                                 Toast.makeText(getApplicationContext()," You MUST be paired with the  " + CONNECTED_DEVICE_NAME , Toast.LENGTH_SHORT).show();
@@ -180,42 +178,27 @@ public class MainActivity extends Activity {
                             }
                         }
                     }
+                    else if(state==PROTECTED_STATE){
+                        if(device.getName().equals(DISCOVERY_DEVICE_NAME)){
+                            discoveryDevice = device;
+                            Toast.makeText(getApplicationContext()," Discovery device found " , Toast.LENGTH_SHORT).show();
+                            rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE);
+                            Toast.makeText(getApplicationContext(), rssi + " dB" , Toast.LENGTH_SHORT).show();
+                            btAdapter.cancelDiscovery();
 
-
-
-
-
-
-
-
-
-                   // int  rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE);
-
-                   /* Toast.makeText(getApplicationContext(),"  RSSI: " + rssi + " dBm " + device.getName() , Toast.LENGTH_SHORT).show();
-
-                    //devices.add(device);
-                    String s = "";
-                    for(int a = 0; a < pairedDevices.size(); a++){
-                        if(device.getName().equals(pairedDevices.get(a))){
-                            //append
-                            s = "(Paired)";
-                            break;
                         }
                     }
-*/
-                    //listAdapter.add(device.getName()+" "+s+" "+"\n"+device.getAddress());
-                    // Do not delete this
-                   // btAdapter.cancelDiscovery();
 
                 }
 
                 else if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)){
-
                     Toast.makeText(getApplicationContext(), " DiscoveryStarted ", Toast.LENGTH_SHORT).show();
                 }
                 else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
                     // VERY VERY IMPORTANT
-                    btAdapter.startDiscovery();
+                    if(state==PROTECTED_STATE){
+                        btAdapter.startDiscovery();
+                    }
 
 
 
@@ -251,11 +234,26 @@ public class MainActivity extends Activity {
     }
 
 
-    public void connectButton(){
-
+    public void connectButton(View view){
+        getPairedDevices();
         startDiscovery();
 
 
+    }
+
+    public void protectionButton(View view){
+        if(state == INIT_STATE){
+            Toast.makeText(getApplicationContext(),"You MUST connect to get on protection mode",Toast.LENGTH_LONG).show();
+
+        }
+        else{
+            Toast.makeText(getApplicationContext(),"Protection Mode Enabled",Toast.LENGTH_LONG).show();
+            state = PROTECTED_STATE;
+            // start discovery mode
+            startDiscovery();
+
+
+        }
     }
 
 

@@ -37,8 +37,8 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/Connectbutton"
             android:text="Connect"
-            android:id="@+id/button"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
@@ -46,6 +46,27 @@
             android:layout_marginEnd="41dp"
             android:layout_marginTop="61dp"
             android:onClick="connectButton"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Protection Mode"
+            android:id="@+id/Protectionbutton"
+            android:onClick="protectionButton"
+            android:layout_below="@+id/Connectbutton"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="68dp" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/debuggText"
+            android:layout_below="@+id/Connectbutton"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="91dp"
+            android:layout_marginStart="91dp" />
     </RelativeLayout>
 
 
