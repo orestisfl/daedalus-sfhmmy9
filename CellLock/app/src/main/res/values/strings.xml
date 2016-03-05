@@ -2,4 +2,5 @@
     <string name="app_name">CellLock</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="welcome_screen_text">CellLock</string>
 </resources>
