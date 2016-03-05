@@ -179,17 +179,17 @@ public class MainActivity extends Activity {
                         }
                     } else if (state == PROTECTED_STATE || state == WARNING_STATE) {
                         try {
-                            Thread.sleep(500);
+                            Thread.sleep(50);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                         String temp = connectedThread.readData(getApplicationContext());
                         textView.setText(temp);
 
-/*                        if(temp==null){
+                        if(temp==null){
                              changeState(DISCONNECTED_STATE);
                          }
-*/
+
                         if (device.getName().equals(DISCOVERY_DEVICE_NAME)) {
                             //discoveryDevice = device;
                             Toast.makeText(getApplicationContext()," Discovery device found " , Toast.LENGTH_SHORT).show();
@@ -471,8 +471,8 @@ public class MainActivity extends Activity {
                 mmInStream.read(bytes);
                 strInput = new String(bytes);
                 //strInput = new String(bytes);
-            }catch(Exception e){
-                e.printStackTrace();
+            }catch(IOException e){
+                changeState(DISCONNECTED_STATE);
             }
             return strInput;
         }
