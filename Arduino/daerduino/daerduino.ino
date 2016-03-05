@@ -57,6 +57,19 @@ bool checkBT() {
 
 String readBT() {
     String response = "";
+    Millis currentTime = millis();
+    while (true) { // While there is more to be read, keep reading.
+        if (checkBT()) {
+            char c = (char)BTSerial.read();
+            if (c == ';' || response == "OK") return response;
+            response += c;
+            currentTime = millis();
+        } else if (millis() - currentTime > BT_TIMEOUT_MILLIS) return "";
+    }
+}
+
+String readBTNonBlocking() {
+    String response = "";
     while (checkBT()) { // While there is more to be read, keep reading.
         response += (char)BTSerial.read();
     }
@@ -64,12 +77,9 @@ String readBT() {
 }
 
 bool isConnected() {
-    noInterrupts();
     BTSerial.write("AT");
     delay(600);  // it needs a huge delay.
-    String response = readBT();
-    Serial.println("isConnected:");
-    Serial.println(response);
+    String response = readBTNonBlocking();
     return response != "OK";
 }
 
