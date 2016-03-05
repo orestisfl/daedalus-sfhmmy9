@@ -9,9 +9,9 @@ public class PositionExperimentHandler implements PositionHandlerI {
 
   private PrintWriter writer;
 
-  public PositionExperimentHandler(ArrayList<String> filename)
+  public PositionExperimentHandler(String filename)
       throws FileNotFoundException, UnsupportedEncodingException {
-    writer = new PrintWriter(filename.get(0), "UTF-8");
+    writer = new PrintWriter(filename, "UTF-8");
   }
 
   public void closeWriter() {
@@ -24,6 +24,7 @@ public class PositionExperimentHandler implements PositionHandlerI {
 
   @Override
   public boolean modeFromRssi(State state) {
+    state.mode = State.ProtectionMode.NORMAL;
     writer.println(state.rssiValue);
     return true;
   }

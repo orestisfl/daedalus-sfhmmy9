@@ -26,6 +26,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.daedalus.celllock.rssi_distance.PositionHandlerFactory;
+import com.example.daedalus.celllock.rssi_distance.PositionHandlerI;
+import com.example.daedalus.celllock.rssi_distance.State;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -67,8 +71,9 @@ public class MainActivity extends Activity {
     TextView textView;
     String tag = "debugging";
 
+    protected PositionHandlerI positionHandler;
 
-    Handler mHandler = new Handler() {
+    Handler mHandler = new Handler()  {
         @Override
         public void handleMessage(Message msg) {
             // TODO Auto-generated method stub
@@ -233,7 +238,7 @@ public class MainActivity extends Activity {
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         pairedDevices = new ArrayList<String>();
         filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-
+        positionHandler = PositionHandlerFactory.spawnPositionHandler("experimental", "test.txt");
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -280,6 +285,9 @@ public class MainActivity extends Activity {
                             rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
                             textView.setText("" + rssi);
                             //Send rssi
+                            State state = new State();
+                            state.rssiValue = rssi;
+                            positionHandler.modeFromRssi(state);
                             // Get response
                             int response = computeResponse(rssi); // the responce from tsiri
 

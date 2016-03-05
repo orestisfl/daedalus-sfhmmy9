@@ -27,7 +27,8 @@ public class FriisConverter implements RssiHandlerI {
   public FriisConverter() {
     lastRssiValues = new ArrayList<Integer>();
     ArrayList<Double> params = new ArrayList<Double>();
-    try (BufferedReader br = new BufferedReader(new FileReader("model_params.txt"))) {
+    try {
+        BufferedReader br = new BufferedReader(new FileReader("model_params.txt"));
         String line;
         while ((line = br.readLine()) != null) {
           params.add(Double.parseDouble(line));

@@ -6,11 +6,11 @@ import java.util.ArrayList;
 
 public class PositionHandlerFactory {
 
-  static public PositionHandlerI spawnPositionHandler(String type, ArrayList<String> args) {
+  static public PositionHandlerI spawnPositionHandler(String type, String arg) {
     try {
       switch (type) {
         case "experiment":
-          return new PositionExperimentHandler(args);
+          return new PositionExperimentHandler(arg);
         case "true":
           return new ProtectionHandler();
       }
