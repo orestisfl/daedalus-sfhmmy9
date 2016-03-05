@@ -30,23 +30,6 @@ proguard/
 # Log Files
 *.log
 
-#####=== ArchLinuxPackages ===#####
-
-*.tar
-*.tar.*
-*.zip
-*.tgz
-*.log
-*.log.*
-*.sig
-
-# AUR metadata
-.AURINFO
-.SRCINFO
-
-pkg/
-src/
-
 #####=== C ===#####
 
 # Object files
