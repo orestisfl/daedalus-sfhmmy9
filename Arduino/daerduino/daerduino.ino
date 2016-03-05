@@ -1,6 +1,8 @@
 #include <SoftwareSerial.h>
 SoftwareSerial BTSerial(4, 2); // RX, TX
 
+#include <TimerOne.h>
+
 typedef unsigned long Millis;
 
 // the pin that the pushbutton is attached to.
@@ -9,9 +11,15 @@ typedef unsigned long Millis;
 #define EMERGENCY_DIFF_MILLIS 1000
 // the pin that gives voltage to our buzzer.
 #define BUZZER_PIN 6
+#define BT_TIMEOUT_MILLIS 50
+#define INTERRUPT_FREQUENCY_MICROS 1500000
 
 int emergencyPressesCount = 0;
 unsigned long startTime = 0;
+
+typedef enum {STATE_OFF, STATE_PROTECTED, STATE_SEMI, STATE_DANGER} State;
+volatile State currentState;
+volatile bool playRing = false;
 
 void setup() {
     // Open serial communications:
@@ -19,6 +27,9 @@ void setup() {
     Serial.println("Type AT commands!");
     pinMode(BUTTON_PIN, INPUT);
     pinMode(BUZZER_PIN, OUTPUT);
+
+    Timer1.initialize(INTERRUPT_FREQUENCY_MICROS);
+    Timer1.attachInterrupt(interruptBluetooth);
 
     // The HC-06 defaults to 9600 according to the datasheet.
     BTSerial.begin(9600);
@@ -48,13 +59,12 @@ String readBT() {
     String response = "";
     while (checkBT()) { // While there is more to be read, keep reading.
         response += (char)BTSerial.read();
-        // small delay to ensure we receive whole command. Maybe it's better to use short commands
-        // to avoid this.
     }
     return response;
 }
 
 bool isConnected() {
+    noInterrupts();
     BTSerial.write("AT");
     delay(600);  // it needs a huge delay.
     String response = readBT();
@@ -63,19 +73,46 @@ bool isConnected() {
     return response != "OK";
 }
 
-void loop() {
+void interruptBluetooth() {
+    Serial.println("Interrupted:");
     // Read received data if available.
-    String command;
-    if ((command = readBT()) != "") {
-        if (command == "1") BTSerial.println("LED: ON");
-        else if (command == "0") BTSerial.println("LED: off");
-        else if (command == "RING") sing();
+    noInterrupts();
+    if (isConnected()) {
+        Serial.println("CONNECTED sent to pair.");
+        BTSerial.write("CONNECTED");
+    } else {
+        Serial.println("No connection to send to pair.");
+        return;
+    }
+    while (checkBT()) {
+        String command = readBT();
+        if (command == "RING") {
+            playRing = true;
+        } else if (command == "SEMI") {
+            currentState = STATE_SEMI;
+        } else if (command == "POFF") {
+            currentState = STATE_OFF;
+        } else if (command == "RSTOP") {
+            playRing = false;
+        } else if (command == "PON") {
+            currentState = STATE_PROTECTED;
+        } else if (command == "DANG") {
+            currentState = STATE_DANGER;
+        } else {
+            // dont' respond.
+            continue;
+        }
+        BTSerial.write("OK");
 
         Serial.println("Received command:");
         Serial.println(command);
     }
+    interrupts();
+}
 
+void loop() {
     // Read user input if available.
+    if (playRing) sing();
     while (Serial.available()) {
         delay(10); // The delay is necessary to get this working!
         BTSerial.write(Serial.read());
