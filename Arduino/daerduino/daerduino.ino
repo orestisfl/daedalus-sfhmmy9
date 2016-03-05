@@ -54,6 +54,15 @@ String readBT() {
     return response;
 }
 
+bool isConnected() {
+    BTSerial.write("AT");
+    delay(600);  // it needs a huge delay.
+    String response = readBT();
+    Serial.println("isConnected:");
+    Serial.println(response);
+    return response != "OK";
+}
+
 void loop() {
     // Read received data if available.
     String command;
