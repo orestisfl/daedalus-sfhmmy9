@@ -125,12 +125,15 @@ void loop() {
     if (playRing) sing();
     while (Serial.available()) {
         delay(10); // The delay is necessary to get this working!
-        BTSerial.write(Serial.read());
+        char c = Serial.read();
+        BTSerial.write(c);
+        Serial.print("Executed:");
+        Serial.println(c);
     }
 
     if (emergencyButtonPressed()) {
         // Send emergency here.
-        Serial.println("pressed!");
+        Serial.println("Button pressed, sending RING command via bluetooth.");
         BTSerial.write("RING");
     }
 }
