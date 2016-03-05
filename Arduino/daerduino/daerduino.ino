@@ -1,6 +1,8 @@
 #include <SoftwareSerial.h>
 SoftwareSerial BTSerial(4, 2); // RX, TX
 
+typedef unsigned long Millis;
+
 // the pin that the pushbutton is attached to.
 #define BUTTON_PIN 7
 // button being pressed for 1 second => emergency mode.
@@ -24,7 +26,7 @@ void setup() {
 
 // TODO: make it non-blocking.
 bool emergencyButtonPressed() {
-    unsigned long startTime = millis();
+    Millis startTime = millis();
     while (digitalRead(BUTTON_PIN) == HIGH) {
         // Delay a little bit to avoid bouncing
         delay(50);
@@ -33,19 +35,29 @@ bool emergencyButtonPressed() {
     return false;
 }
 
-void loop() {
-    // Stores response of the HC-06 Bluetooth device. Reset at every loop to avoid repeats.
-    String command = "";
-
-    // Read received data if available.
+bool checkBT() {
     if (BTSerial.available()) {
-        while (BTSerial.available()) { // While there is more to be read, keep reading.
-            command += (char)BTSerial.read();
-            // small delay to ensure we receive whole command. Maybe it's better to use short commands
-            // to avoid this.
-            delay(10);
-        }
+        return true;
+    } else {
+        delay(10);  // wait for small timeout
+        return BTSerial.available();
+    }
+}
 
+String readBT() {
+    String response = "";
+    while (checkBT()) { // While there is more to be read, keep reading.
+        response += (char)BTSerial.read();
+        // small delay to ensure we receive whole command. Maybe it's better to use short commands
+        // to avoid this.
+    }
+    return response;
+}
+
+void loop() {
+    // Read received data if available.
+    String command;
+    if ((command = readBT()) != "") {
         if (command == "1") BTSerial.println("LED: ON");
         else if (command == "0") BTSerial.println("LED: off");
         else if (command == "RING") sing();
