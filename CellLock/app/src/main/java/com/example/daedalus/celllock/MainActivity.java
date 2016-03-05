@@ -32,6 +32,7 @@ import java.util.UUID;
 public class MainActivity extends Activity {
 
 
+
     BluetoothAdapter btAdapter;
     ArrayList<String> pairedDevices;
     Set<BluetoothDevice> devicesArray;
@@ -45,12 +46,15 @@ public class MainActivity extends Activity {
     private static final int CONNECTED_STATE = 6;
     private static final int PROTECTED_STATE = 7;
     private static final int FINDARDUINO_STATE = 8;
+    private static final int WARNING_STATE = 9;
+    private static final int DANGER_STATE = 10;
+    private static final int DISCONNECTED_STATE = 11;
     public int prevState = 0;
 
     private static final String CONNECTED_DEVICE_NAME ="Peinaw";
     private static final String DISCOVERY_DEVICE_NAME ="Orestis";
     private BluetoothDevice connectionDevice;
-    private BluetoothDevice discoveryDevice;
+    //private BluetoothDevice discoveryDevice;
     private ConnectedThread connectedThread;
 
     TextView textView;
@@ -68,21 +72,19 @@ public class MainActivity extends Activity {
                 case SUCCESS_CONNECT:
                     // when you connect to a device restart discovery in order to search for other
                     // devices
-
-
-
-
                     connectedThread = new ConnectedThread((BluetoothSocket)msg.obj);
-                    textView.setText("CONNECTED");
+
                     // State changes to Connected State;
-
-
                     changeState(CONNECTED_STATE);
 
+
+                    //String temp = connectedThread.readData(getApplicationContext());
+
+                    //if(temp==null){
+                   //     changeState(DISCONNECTED_STATE);
+                  //  }
+
                     //Check thn malakia mas
-
-
-
                     break;
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[])msg.obj;
@@ -150,76 +152,88 @@ public class MainActivity extends Activity {
         pairedDevices = new ArrayList<String>();
         filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 
-        receiver = new BroadcastReceiver(){
+        receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 int rssi;
                 // TODO Auto-generated method stub
                 String action = intent.getAction();
 
-                if(BluetoothDevice.ACTION_FOUND.equals(action)){
+                if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    if(state==INIT_STATE){
-                        if(device.getName().equals(CONNECTED_DEVICE_NAME)){
-
-
+                    if (state == INIT_STATE) {
+                        if (device.getName().equals(CONNECTED_DEVICE_NAME)) {
                             connectionDevice = device;
-                            Toast.makeText(getApplicationContext()," Device for Connection Found " , Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), " Device for Connection Found ", Toast.LENGTH_SHORT).show();
 
-                            if(pairedDevices.contains(connectionDevice.getName())){
+                            if (pairedDevices.contains(connectionDevice.getName())) {
 
                                 // Start Connection
                                 ConnectThread connect = new ConnectThread(connectionDevice);
                                 connect.start();
 
-                            }
-                            else{
-                                Toast.makeText(getApplicationContext()," You MUST be paired with the  " + CONNECTED_DEVICE_NAME , Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(), " You MUST be paired with the  " + CONNECTED_DEVICE_NAME, Toast.LENGTH_SHORT).show();
 
                             }
                         }
-                    }
-                    else if(state==PROTECTED_STATE){
-                        if(device.getName().equals(DISCOVERY_DEVICE_NAME)){
+                    } else if (state == PROTECTED_STATE || state == WARNING_STATE) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        String temp = connectedThread.readData(getApplicationContext());
+                        textView.setText(temp);
+
+/*                        if(temp==null){
+                             changeState(DISCONNECTED_STATE);
+                         }
+*/
+                        if (device.getName().equals(DISCOVERY_DEVICE_NAME)) {
                             //discoveryDevice = device;
-                           // Toast.makeText(getApplicationContext()," Discovery device found " , Toast.LENGTH_SHORT).show();
-                            rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE);
+                            Toast.makeText(getApplicationContext()," Discovery device found " , Toast.LENGTH_SHORT).show();
+                            rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
                             //Send rssi
-
-
-
                             // Get response
-                            
+                            int response = 0; // the responce from tsiri
 
+                            if (response == 0) {
+                                changeState(PROTECTED_STATE);
+                            } else if (response == 1) {
+                                changeState(WARNING_STATE);
+                            } else if (response == 2) {
+                                changeState(DANGER_STATE);
 
+                            }
                             // Change state
 
 
-                            Toast.makeText(getApplicationContext(), rssi + " dB" , Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getApplicationContext(), rssi + " dB", Toast.LENGTH_SHORT).show();
                             btAdapter.cancelDiscovery();
 
                         }
                     }
 
-                }
-
-                else if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)){
-                    Toast.makeText(getApplicationContext(), " DiscoveryStarted ", Toast.LENGTH_SHORT).show();
-                }
-                else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
+                } else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
+                    //Toast.makeText(getApplicationContext(), " DiscoveryStarted ", Toast.LENGTH_SHORT).show();
+                } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                     // VERY VERY IMPORTANT
-                    if(state==PROTECTED_STATE){
+                    if (state == PROTECTED_STATE||state==WARNING_STATE) {
                         btAdapter.startDiscovery();
                     }
 
 
 
-                }
-                else if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)){
-                    if(btAdapter.getState() == btAdapter.STATE_OFF){
+                } else if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
+                    if (btAdapter.getState() == btAdapter.STATE_OFF) {
                         turnOnBT();
                     }
+                } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                    changeState(DISCONNECTED_STATE);
+                    //Device has disconnected
                 }
+
 
             }
         };
@@ -231,13 +245,36 @@ public class MainActivity extends Activity {
         registerReceiver(receiver, filter);
         filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(receiver, filter);
+        filter = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
+        registerReceiver(receiver, filter);
     }
 
 
     private void changeState(int s){
+        int temp = prevState;
         prevState = state;
         state = s;
         update(s, prevState);
+        if(state==PROTECTED_STATE){
+            connectedThread.write("PON;".getBytes());
+        }
+        else if(state==CONNECTED_STATE){
+            connectedThread.write("POFF;".getBytes());
+        }
+        else if(state==WARNING_STATE){
+            connectedThread.write("SEMI;".getBytes());
+        }
+        else if(state==DANGER_STATE){
+            connectedThread.write("DANG;".getBytes());
+
+        }
+        else if (state==DISCONNECTED_STATE ){
+            //&& temp != CONNECTED_STATE && temp !=INIT_STATE
+            changeState(DANGER_STATE);
+        }
+        textView.clearComposingText();
+        textView.setText(""+state);
+
     }
 
     private void update(int s, int prevState) {
@@ -292,7 +329,7 @@ public class MainActivity extends Activity {
     public void ringButton(View view){
 
         if(state == PROTECTED_STATE || state == CONNECTED_STATE){
-            String s = "RING";
+            String s = "RING;";
             connectedThread.write(s.getBytes());
             changeState(FINDARDUINO_STATE);
 
@@ -302,7 +339,7 @@ public class MainActivity extends Activity {
             Toast.makeText(getApplicationContext(), "You must Connect first to find your keys", Toast.LENGTH_SHORT).show();
         }
         else if(state == FINDARDUINO_STATE){
-            String s = "RSTOP";
+            String s = "RSTOP;";
             connectedThread.write(s.getBytes());
             Toast.makeText(getApplicationContext(), "Congrats you found your fucking keys", Toast.LENGTH_SHORT).show();
             changeState(prevState);
@@ -422,14 +459,18 @@ public class MainActivity extends Activity {
         public void write(byte[] bytes) {
             try {
                 mmOutStream.write(bytes);
-            } catch (IOException e) { }
+            } catch (IOException e) {
+            }
         }
 
 
         public String read(byte[] bytes){
+
+            strInput = null;
             try {
                 mmInStream.read(bytes);
                 strInput = new String(bytes);
+                //strInput = new String(bytes);
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -450,7 +491,7 @@ public class MainActivity extends Activity {
             String outputString=null;
             if(isBluetoothAvailable()) {
                 outputString = connectedThread.read(buffer);
-            }else if(state==CONNECTED_STATE){
+            }else{
                 Toast.makeText(context, "Error: Not Connected", Toast.LENGTH_LONG).show();
             }
             return outputString;
