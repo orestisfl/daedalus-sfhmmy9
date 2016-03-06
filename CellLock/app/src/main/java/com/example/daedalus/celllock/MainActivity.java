@@ -62,6 +62,7 @@ public class MainActivity extends Activity {
     private BluetoothDevice connectionDevice;
     //private BluetoothDevice discoveryDevice;
     private ConnectedThread connectedThread;
+    private Thread resendStateThread;
 
     TextView textView;
     String tag = "debugging";
@@ -100,6 +101,14 @@ public class MainActivity extends Activity {
         }
     };
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (resendStateThread != null) {
+            resendStateThread.interrupt();
+            resendStateThread = null;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +127,7 @@ public class MainActivity extends Activity {
         }
 
         // start thread that resends current state command repeatedly.
-        Thread resendStateThread = new Thread(new Runnable() {
+        resendStateThread = new Thread(new Runnable() {
             public void run() {
                 Map<Integer, String> dict = new HashMap<Integer, String>();
                 // uncomment if you want to send "PON;" through this thread.
