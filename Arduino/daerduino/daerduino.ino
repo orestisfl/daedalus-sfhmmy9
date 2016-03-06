@@ -80,7 +80,7 @@ String readBTNonBlocking() {
 }
 
 void interruptBluetooth() {
-    Serial.println("Interrupted:");
+    Serial.println("-----------------------------Interrupted----------------------------------------");
     // Read received data if available.
     noInterrupts();
     BTSerial.write("CONNECTED");
@@ -107,6 +107,7 @@ void interruptBluetooth() {
         Serial.println("Received command:");
         Serial.println(command);
     }
+    Serial.println("--------------------------------------------------------------------------------");
     interrupts();
 }
 
