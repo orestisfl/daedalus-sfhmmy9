@@ -14,7 +14,7 @@
 /*************************************************
  * Public Constants
  *************************************************/
-
+#include <avr/wdt.h>
 #define NOTE_B0  31
 #define NOTE_C1  33
 #define NOTE_CS1 35
@@ -170,6 +170,7 @@ void sing(void) {
         // divided by the note type.
         //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
         if (!alarmShouldPlay()) return;  // stop sound immediately.
+        wdt_reset();
         int noteDuration = 1000 / tempo[thisNote];
 
         mybuzz(melodyPin, melody[thisNote], noteDuration);

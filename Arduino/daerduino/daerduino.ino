@@ -4,6 +4,8 @@ SoftwareSerial BTSerial(4, 2); // RX, TX
 #include <TimerOne.h>
 typedef unsigned long Millis;
 
+#include <avr/wdt.h>
+
 // the pin for the red/danger led
 #define DANGER_LED_PIN 10
 // the pin for the red/danger led
@@ -40,6 +42,8 @@ void setup() {
 
     // The HC-06 defaults to 9600 according to the datasheet.
     BTSerial.begin(9600);
+    // Enable WDT
+    wdt_enable(WDTO_1S);
 }
 
 bool emergencyButtonPressed() {
@@ -132,7 +136,10 @@ void updateLEDs() {
 
 Millis lastTimeRingWasSent = 0;
 void loop() {
+    // Reset WDT
+    wdt_reset();
     updateLEDs();
+
     // Read user input if available.
     if (alarmShouldPlay()) sing();
     while (Serial.available()) {
