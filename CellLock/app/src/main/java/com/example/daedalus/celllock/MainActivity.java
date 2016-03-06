@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
     private static final int DANGER_STATE = 10;
     private static final int DISCONNECTED_STATE = 11;
     public int prevState = 0;
-    public MediaPlayer mPlayer;
+    public static MediaPlayer mPlayer;
 
     private static final String CONNECTED_DEVICE_NAME = "Peinaw";
     private static final String DISCOVERY_DEVICE_NAME = "Orestis";
@@ -220,8 +220,11 @@ public class MainActivity extends Activity {
     // End of Rendering Functions
 
     // Initialization method
-
     private void init() {
+        if (MainActivity.mPlayer != null){
+            MainActivity.mPlayer.stop();
+            MainActivity.mPlayer = null;
+        }
 
         // Initialize the first state
         mPlayer = MediaPlayer.create(getApplication(), R.raw.alarm);
