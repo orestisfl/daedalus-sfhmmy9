@@ -429,7 +429,7 @@ public class MainActivity extends Activity {
         } else if (state == FINDARDUINO_STATE) {
             String s = "RSTOP;";
             connectedThread.write(s.getBytes());
-            Toast.makeText(getApplicationContext(), "Congrats you found your fucking keys", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Congrats you found your keys", Toast.LENGTH_SHORT).show();
             changeState(prevState);
         }
 
