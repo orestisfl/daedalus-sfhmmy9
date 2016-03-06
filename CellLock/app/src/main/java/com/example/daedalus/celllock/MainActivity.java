@@ -12,6 +12,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -29,11 +30,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 public class MainActivity extends Activity {
-
 
 
     BluetoothAdapter btAdapter;
@@ -45,7 +47,7 @@ public class MainActivity extends Activity {
     public static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     protected static final int SUCCESS_CONNECT = 0;
     protected static final int MESSAGE_READ = 1;
-    private static final int  INIT_STATE = 5;
+    private static final int INIT_STATE = 5;
     private static final int CONNECTED_STATE = 6;
     private static final int PROTECTED_STATE = 7;
     private static final int FINDARDUINO_STATE = 8;
@@ -116,14 +118,29 @@ public class MainActivity extends Activity {
             if (!btAdapter.isEnabled()) {
                 turnOnBT();
             }
-        // Start the main app
-
-
         }
-            //startDiscovery();
-        //
 
+        // start thread that resends current state command repeatedly.
+        Thread resendStateThread = new Thread(new Runnable() {
+            public void run() {
+                Map<Integer, String> dict = new HashMap<Integer, String>();
+                // uncomment if you want to send "PON;" through this thread.
+//                dict.put(PROTECTED_STATE, "PON;");
+                dict.put(WARNING_STATE, "SEMI;");
+                dict.put(DANGER_STATE, "DANG;");
+                dict.put(CONNECTED_STATE, "POFF;");
 
+                while (true) {
+                    final String stateCommand = dict.get(state);
+                    if (connectedThread != null && stateCommand != null) {
+                        connectedThread.write(stateCommand.getBytes());
+                    }
+
+                    SystemClock.sleep(500);
+                }
+            }
+        });
+        resendStateThread.start();
     }
 
     private void playAlarm() {
