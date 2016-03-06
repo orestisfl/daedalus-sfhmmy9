@@ -31,15 +31,12 @@ void setup() {
     BTSerial.begin(9600);
 }
 
-// TODO: make it non-blocking.
 bool emergencyButtonPressed() {
-    Millis startTime = millis();
-    while (digitalRead(BUTTON_PIN) == HIGH) {
-        // Delay a little bit to avoid bouncing
-        delay(50);
-        if (millis() - startTime > EMERGENCY_DIFF_MILLIS) return true;
-    }
-    return false;
+    static Millis startTime;
+    static bool buttonWasBeingPressed = false;
+    if (!buttonWasBeingPressed) startTime = millis();
+    buttonWasBeingPressed = (digitalRead(BUTTON_PIN) == HIGH);
+    return buttonWasBeingPressed && (millis() - startTime > EMERGENCY_DIFF_MILLIS);
 }
 
 bool checkBT() {
