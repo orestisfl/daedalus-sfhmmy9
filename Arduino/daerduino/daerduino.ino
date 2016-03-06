@@ -4,12 +4,18 @@ SoftwareSerial BTSerial(4, 2); // RX, TX
 #include <TimerOne.h>
 typedef unsigned long Millis;
 
+// the pin for the red/danger led
+#define DANGER_LED_PIN 10
+// the pin for the red/danger led
+#define SEMI_LED_PIN 11
+// the pin for the red/danger led
+#define PROTECTED_LED_PIN 12
+// the pin that gives voltage to our buzzer.
+#define BUZZER_PIN 6
 // the pin that the pushbutton is attached to.
 #define BUTTON_PIN 7
 // button being pressed for 1 second => emergency mode.
 #define EMERGENCY_DIFF_MILLIS 1000
-// the pin that gives voltage to our buzzer.
-#define BUZZER_PIN 6
 #define BT_TIMEOUT_MILLIS 50
 #define INTERRUPT_FREQUENCY_MICROS 1500000
 #define RING_SENT_FREQUENCY_MILLIS 400
@@ -24,6 +30,10 @@ void setup() {
     Serial.println("Type AT commands!");
     pinMode(BUTTON_PIN, INPUT);
     pinMode(BUZZER_PIN, OUTPUT);
+    // define led pins as output.
+    pinMode(DANGER_LED_PIN, OUTPUT);
+    pinMode(SEMI_LED_PIN, OUTPUT);
+    pinMode(PROTECTED_LED_PIN, OUTPUT);
 
     Timer1.initialize(INTERRUPT_FREQUENCY_MICROS);
     Timer1.attachInterrupt(interruptBluetooth);
@@ -103,20 +113,26 @@ void interruptBluetooth() {
             continue;
         }
         BTSerial.write("OK");
-
-        Serial.println("Received command:");
-        Serial.println(command);
     }
     Serial.println("--------------------------------------------------------------------------------");
     interrupts();
 }
 
-bool alarmShouldPlay(){
+bool alarmShouldPlay() {
     return playRing || (currentState == STATE_DANGER);
+}
+
+
+#define BOOL_TO_PIN(x) ((x) ? HIGH : LOW)
+void updateLEDs() {
+    digitalWrite(DANGER_LED_PIN, BOOL_TO_PIN(currentState == STATE_DANGER));
+    digitalWrite(SEMI_LED_PIN, BOOL_TO_PIN(currentState == STATE_SEMI));
+    digitalWrite(PROTECTED_LED_PIN, BOOL_TO_PIN(currentState == STATE_PROTECTED));
 }
 
 Millis lastTimeRingWasSent = 0;
 void loop() {
+    updateLEDs();
     // Read user input if available.
     if (alarmShouldPlay()) sing();
     while (Serial.available()) {
