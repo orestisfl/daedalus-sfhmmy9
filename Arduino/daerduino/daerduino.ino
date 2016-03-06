@@ -109,10 +109,14 @@ void interruptBluetooth() {
     interrupts();
 }
 
+bool alarmShouldPlay(){
+    return playRing || (currentState == STATE_DANGER);
+}
+
 Millis lastTimeRingWasSent = 0;
 void loop() {
     // Read user input if available.
-    if (playRing) sing();
+    if (alarmShouldPlay()) sing();
     while (Serial.available()) {
         delay(10); // The delay is necessary to get this working!
         char c = Serial.read();

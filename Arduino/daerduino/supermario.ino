@@ -169,7 +169,7 @@ void sing(void) {
         // to calculate the note duration, take one second
         // divided by the note type.
         //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
-        if (!playRing) return;  // stop sound immediately.
+        if (!alarmShouldPlay()) return;  // stop sound immediately.
         int noteDuration = 1000 / tempo[thisNote];
 
         mybuzz(melodyPin, melody[thisNote], noteDuration);
