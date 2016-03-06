@@ -81,7 +81,7 @@ void interruptBluetooth() {
     Serial.println("-----------------------------Interrupted----------------------------------------");
     // Read received data if available.
     noInterrupts();
-    BTSerial.write("CONNECTED");
+    BTSerial.write("C");
     while (checkBT()) {
         String command = readBT();
         if (command == "RING") {
