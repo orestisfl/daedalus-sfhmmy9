@@ -12,6 +12,7 @@ typedef unsigned long Millis;
 #define BUZZER_PIN 6
 #define BT_TIMEOUT_MILLIS 50
 #define INTERRUPT_FREQUENCY_MICROS 1500000
+#define RING_SENT_FREQUENCY_MILLIS 400
 
 typedef enum {STATE_OFF, STATE_PROTECTED, STATE_SEMI, STATE_DANGER} State;
 volatile State currentState;
@@ -108,6 +109,7 @@ void interruptBluetooth() {
     interrupts();
 }
 
+Millis lastTimeRingWasSent = 0;
 void loop() {
     // Read user input if available.
     if (playRing) sing();
@@ -122,6 +124,16 @@ void loop() {
     if (emergencyButtonPressed()) {
         // Send emergency here.
         Serial.println("Button pressed, sending RING command via bluetooth.");
+        Millis diff = millis() - lastTimeRingWasSent;
+        Millis timeToWait = (diff > RING_SENT_FREQUENCY_MILLIS) ? 0 : RING_SENT_FREQUENCY_MILLIS -  diff;
+        if (timeToWait) {
+            Serial.print("Continuous press, wait millis:");
+            Serial.println(timeToWait);
+            delay(timeToWait);
+        }
+        lastTimeRingWasSent = millis();
+        noInterrupts();
         BTSerial.write("RING");
+        interrupts();
     }
 }
