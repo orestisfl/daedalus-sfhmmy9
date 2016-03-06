@@ -40,7 +40,7 @@
             android:shadowDx="0"
             android:shadowDy="0"
             android:shadowRadius="0"
-            android:text="Connect"
+            android:text="Start"
             android:typeface="monospace"
             android:onClick="startConnection"
             android:layout_below="@+id/imageView"

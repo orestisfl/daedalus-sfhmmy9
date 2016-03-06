@@ -5,21 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@color/colorBackground"
+
     tools:context="com.example.daedalus.celllock.MainActivity">
-
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -38,14 +26,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/Connectbutton"
-            android:text="Connect"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="41dp"
-            android:layout_marginEnd="41dp"
-            android:layout_marginTop="61dp"
-            android:onClick="connectButton"/>
+            android:text="Pair"
+            android:background="@drawable/buttonshape"
+            android:textColor="#FFFFFF"
+            android:typeface="monospace"
+            android:width="90dp"
+            android:height="30dp"
+            android:onClick="connectButton"
+            android:layout_alignTop="@+id/Protectionbutton"
+            android:layout_toLeftOf="@+id/debuggText"
+            android:layout_toStartOf="@+id/debuggText"
+            android:layout_marginRight="-20dp"/>
 
         <Button
             android:layout_width="wrap_content"
@@ -53,20 +44,83 @@
             android:text="Protection Mode"
             android:id="@+id/Protectionbutton"
             android:onClick="protectionButton"
-            android:layout_below="@+id/Connectbutton"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="68dp" />
+            android:background="@drawable/buttonshape"
+            android:textColor="#FFFFFF"
+            android:typeface="monospace"
+            android:width="130dp"
+            android:height="30dp"
+            android:layout_below="@+id/debuggText"
+            android:layout_toRightOf="@+id/debuggText"
+            android:layout_toEndOf="@+id/debuggText"
+            android:layout_marginTop="76dp"
+            android:layout_marginLeft="-20dp"/>
 
-        <EditText
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Status"
             android:id="@+id/debuggText"
-            android:layout_below="@+id/Connectbutton"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginLeft="91dp"
-            android:layout_marginStart="91dp" />
+            android:typeface="monospace"
+            android:textColor="#FFFFFF"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="82dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ring"
+            android:id="@+id/ring"
+            android:background="@drawable/buttonshape"
+            android:textColor="#FFFFFF"
+            android:onClick="ringButton"
+            android:typeface="monospace"
+            android:width="90dp"
+            android:height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="10dp"
+            android:layout_alignLeft="@+id/Connectbutton"
+            android:layout_alignStart="@+id/Connectbutton" />
+
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@mipmap/danger"
+            android:id="@+id/imageViewDanger"
+            android:layout_marginTop="62dp"
+            android:layout_below="@+id/ring"
+            android:layout_centerHorizontal="true"
+            android:visibility="visible"/>
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@mipmap/shield_ok"
+            android:id="@+id/imageViewShield"
+            android:layout_marginTop="62dp"
+            android:layout_below="@+id/ring"
+            android:layout_centerHorizontal="true"
+            android:visibility="invisible"/>
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@mipmap/warning"
+            android:id="@+id/imageViewWarning"
+            android:layout_marginTop="62dp"
+            android:layout_below="@+id/ring"
+            android:layout_centerHorizontal="true"
+            android:visibility="invisible"/>
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@mipmap/bell"
+            android:id="@+id/imageViewBell"
+            android:layout_marginTop="62dp"
+            android:layout_below="@+id/ring"
+            android:layout_centerHorizontal="true"
+            android:visibility="invisible"/>
+
     </RelativeLayout>
 
 

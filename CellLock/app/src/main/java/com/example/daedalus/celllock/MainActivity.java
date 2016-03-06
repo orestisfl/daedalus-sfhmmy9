@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -138,6 +139,53 @@ public class MainActivity extends Activity {
         }
     }
 
+    public void renderToProtected()
+    {
+        ImageView imgShield=(ImageView)findViewById(R.id.imageViewShield);
+        ImageView imgDanger=(ImageView)findViewById(R.id.imageViewDanger);
+        ImageView imgWarning=(ImageView)findViewById(R.id.imageViewWarning);
+        ImageView imgBell=(ImageView)findViewById(R.id.imageViewBell);
+        imgBell.setVisibility(ImageView.INVISIBLE);
+        imgWarning.setVisibility(ImageView.INVISIBLE);
+        imgDanger.setVisibility(ImageView.INVISIBLE);
+        imgShield.setVisibility(ImageView.VISIBLE);
+    }
+    public void renderToDanger()
+    {
+        ImageView imgShield=(ImageView)findViewById(R.id.imageViewShield);
+        ImageView imgDanger=(ImageView)findViewById(R.id.imageViewDanger);
+        ImageView imgWarning=(ImageView)findViewById(R.id.imageViewWarning);
+        ImageView imgBell=(ImageView)findViewById(R.id.imageViewBell);
+        imgWarning.setVisibility(ImageView.INVISIBLE);
+        imgBell.setVisibility(ImageView.INVISIBLE);
+        imgShield.setVisibility(ImageView.INVISIBLE);
+        imgDanger.setVisibility(ImageView.VISIBLE);
+
+    }
+    public void renderToWarning()
+    {
+        ImageView imgShield=(ImageView)findViewById(R.id.imageViewShield);
+        ImageView imgDanger=(ImageView)findViewById(R.id.imageViewDanger);
+        ImageView imgWarning=(ImageView)findViewById(R.id.imageViewWarning);
+        ImageView imgBell=(ImageView)findViewById(R.id.imageViewBell);
+        imgBell.setVisibility(ImageView.INVISIBLE);
+        imgDanger.setVisibility(ImageView.INVISIBLE);
+        imgShield.setVisibility(ImageView.INVISIBLE);
+        imgWarning.setVisibility(ImageView.VISIBLE);
+    }
+
+    public void renderToBell()
+    {
+        ImageView imgShield=(ImageView)findViewById(R.id.imageViewShield);
+        ImageView imgDanger=(ImageView)findViewById(R.id.imageViewDanger);
+        ImageView imgWarning=(ImageView)findViewById(R.id.imageViewWarning);
+        ImageView imgBell=(ImageView)findViewById(R.id.imageViewBell);
+        imgWarning.setVisibility(ImageView.INVISIBLE);
+        imgShield.setVisibility(ImageView.INVISIBLE);
+        imgDanger.setVisibility(ImageView.INVISIBLE);
+        imgBell.setVisibility(ImageView.VISIBLE);
+
+    }
 
     // Initialization method
 
@@ -241,6 +289,7 @@ public class MainActivity extends Activity {
 
     }
 
+
     public void protectionButton(View view){
         if(state == INIT_STATE){
             Toast.makeText(getApplicationContext(),"You MUST connect to get on protection mode",Toast.LENGTH_LONG).show();
@@ -256,6 +305,9 @@ public class MainActivity extends Activity {
         }
     }
 
+    public void ringButton(View view) {
+        renderToBell();
+    }
 
 
 // Code from Android develope bluetooth app
