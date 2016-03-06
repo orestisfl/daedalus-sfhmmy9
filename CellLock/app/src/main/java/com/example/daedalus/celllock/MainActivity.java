@@ -256,8 +256,8 @@ public class MainActivity extends Activity {
                             textView.setText(""+rssi);
                             //Send rssi
                             // Get response
-                            int response = 2; // the responce from tsiri
-                            if(rssi<-85){
+                            int response = 0; // the responce from tsiri
+                            if(rssi<-75){
                                 response = 2;
                             }
                             if (response == 0) {
