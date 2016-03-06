@@ -19,7 +19,9 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.ImageView;
+
+
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +53,7 @@ public class MainActivity extends Activity {
     private static final int DANGER_STATE = 10;
     private static final int DISCONNECTED_STATE = 11;
     public int prevState = 0;
+    public MediaPlayer mPlayer ;
 
     private static final String CONNECTED_DEVICE_NAME ="Peinaw";
     private static final String DISCOVERY_DEVICE_NAME ="Orestis";
@@ -123,7 +126,6 @@ public class MainActivity extends Activity {
     }
 
     private void playAlarm() {
-        MediaPlayer mPlayer = MediaPlayer.create(getApplication(), R.raw.alarm);
         mPlayer.start();
     }
 
@@ -144,13 +146,62 @@ public class MainActivity extends Activity {
             }
         }
     }
+    // Rendering Functions
+    public void renderToProtected()
+    {
+        ImageView imgShield=(ImageView)findViewById(R.id.imageViewShield);
+        ImageView imgDanger=(ImageView)findViewById(R.id.imageViewDanger);
+        ImageView imgWarning=(ImageView)findViewById(R.id.imageViewWarning);
+        ImageView imgBell=(ImageView)findViewById(R.id.imageViewBell);
+        imgBell.setVisibility(ImageView.INVISIBLE);
+        imgWarning.setVisibility(ImageView.INVISIBLE);
+        imgDanger.setVisibility(ImageView.INVISIBLE);
+        imgShield.setVisibility(ImageView.VISIBLE);
+    }
+    public void renderToDanger()
+    {
+        ImageView imgShield=(ImageView)findViewById(R.id.imageViewShield);
+        ImageView imgDanger=(ImageView)findViewById(R.id.imageViewDanger);
+        ImageView imgWarning=(ImageView)findViewById(R.id.imageViewWarning);
+        ImageView imgBell=(ImageView)findViewById(R.id.imageViewBell);
+        imgWarning.setVisibility(ImageView.INVISIBLE);
+        imgBell.setVisibility(ImageView.INVISIBLE);
+        imgShield.setVisibility(ImageView.INVISIBLE);
+        imgDanger.setVisibility(ImageView.VISIBLE);
 
+    }
+    public void renderToWarning()
+    {
+        ImageView imgShield=(ImageView)findViewById(R.id.imageViewShield);
+        ImageView imgDanger=(ImageView)findViewById(R.id.imageViewDanger);
+        ImageView imgWarning=(ImageView)findViewById(R.id.imageViewWarning);
+        ImageView imgBell=(ImageView)findViewById(R.id.imageViewBell);
+        imgBell.setVisibility(ImageView.INVISIBLE);
+        imgDanger.setVisibility(ImageView.INVISIBLE);
+        imgShield.setVisibility(ImageView.INVISIBLE);
+        imgWarning.setVisibility(ImageView.VISIBLE);
+    }
+
+    public void renderToBell()
+    {
+        ImageView imgShield=(ImageView)findViewById(R.id.imageViewShield);
+        ImageView imgDanger=(ImageView)findViewById(R.id.imageViewDanger);
+        ImageView imgWarning=(ImageView)findViewById(R.id.imageViewWarning);
+        ImageView imgBell=(ImageView)findViewById(R.id.imageViewBell);
+        imgWarning.setVisibility(ImageView.INVISIBLE);
+        imgShield.setVisibility(ImageView.INVISIBLE);
+        imgDanger.setVisibility(ImageView.INVISIBLE);
+        imgBell.setVisibility(ImageView.VISIBLE);
+
+    }
+    // End of Rendering Functions
 
     // Initialization method
 
     private void init() {
 
         // Initialize the first state
+        mPlayer = MediaPlayer.create(getApplication(), R.raw.alarm);
         state = INIT_STATE;
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         pairedDevices = new ArrayList<String>();
@@ -188,20 +239,26 @@ public class MainActivity extends Activity {
                             e.printStackTrace();
                         }
                         String temp = connectedThread.readData(getApplicationContext());
-                        textView.setText(temp);
+                       // textView.setText(temp);
 
                         if(temp==null){
                              changeState(DISCONNECTED_STATE);
                          }
+                        else if(temp.contains("RING")){
+                            playAlarm();
+                        }
 
                         if (device.getName().equals(DISCOVERY_DEVICE_NAME)) {
                             //discoveryDevice = device;
                             Toast.makeText(getApplicationContext()," Discovery device found " , Toast.LENGTH_SHORT).show();
                             rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
+                            textView.setText(""+rssi);
                             //Send rssi
                             // Get response
                             int response = 0; // the responce from tsiri
-
+                            if(rssi<-85){
+                                response = 2;
+                            }
                             if (response == 0) {
                                 changeState(PROTECTED_STATE);
                             } else if (response == 1) {
@@ -258,32 +315,35 @@ public class MainActivity extends Activity {
         int temp = prevState;
         prevState = state;
         state = s;
-        update(s, prevState);
         if(state==PROTECTED_STATE){
+            renderToProtected();
             connectedThread.write("PON;".getBytes());
         }
         else if(state==CONNECTED_STATE){
+            renderToWarning();
             connectedThread.write("POFF;".getBytes());
         }
         else if(state==WARNING_STATE){
+            renderToWarning();
             connectedThread.write("SEMI;".getBytes());
         }
         else if(state==DANGER_STATE){
+
+            playAlarm();
             connectedThread.write("DANG;".getBytes());
+            renderToDanger();
 
         }
         else if (state==DISCONNECTED_STATE ){
             //&& temp != CONNECTED_STATE && temp !=INIT_STATE
             changeState(DANGER_STATE);
+
         }
-        textView.clearComposingText();
-        textView.setText(""+state);
+        //textView.clearComposingText();
+      //  textView.setText(""+state);
 
     }
 
-    private void update(int s, int prevState) {
-        // Kirtsio do something
-    }
 
     //Enable bluetooth function
 
@@ -300,6 +360,7 @@ public class MainActivity extends Activity {
 
 
     }
+
 
     public void protectionButton(View view){
         if(state == INIT_STATE){
@@ -332,10 +393,15 @@ public class MainActivity extends Activity {
 
     public void ringButton(View view){
 
-        if(state == PROTECTED_STATE || state == CONNECTED_STATE){
+        if(mPlayer.isPlaying()){
+            mPlayer.stop();
+        }
+        else if(state == PROTECTED_STATE || state == CONNECTED_STATE){
             String s = "RING;";
             connectedThread.write(s.getBytes());
+            renderToBell();
             changeState(FINDARDUINO_STATE);
+
 
         }
         else if(state == INIT_STATE){
@@ -350,7 +416,6 @@ public class MainActivity extends Activity {
         }
 
     }
-
 
 
 // Code from Android develope bluetooth app
