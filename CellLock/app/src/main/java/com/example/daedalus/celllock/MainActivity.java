@@ -281,10 +281,8 @@ public class MainActivity extends Activity {
                             textView.setText("" + rssi);
                             //Send rssi
                             // Get response
-                            int response = 0; // the responce from tsiri
-                            if (rssi < -75) {
-                                response = 2;
-                            }
+                            int response = computeResponse(rssi); // the responce from tsiri
+
                             if (response == 0) {
                                 changeState(PROTECTED_STATE);
                             } else if (response == 1) {
@@ -409,6 +407,19 @@ public class MainActivity extends Activity {
             Toast.makeText(getApplicationContext(), "You are not protected anymore", Toast.LENGTH_LONG).show();
         } else {
 
+        }
+    }
+    public int computeResponse(int rssi){
+        if(rssi>-80){
+            return 0;
+
+        }
+        else if(rssi>-85 && rssi<-80){
+            return 1;
+
+        }
+        else{
+            return 2;
         }
     }
 
