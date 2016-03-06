@@ -238,7 +238,7 @@ public class MainActivity extends Activity {
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         pairedDevices = new ArrayList<String>();
         filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        positionHandler = PositionHandlerFactory.spawnPositionHandler("experimental", "test.txt");
+        positionHandler = PositionHandlerFactory.spawnPositionHandler("real", "");
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -288,9 +288,10 @@ public class MainActivity extends Activity {
                             State state = new State();
                             state.rssiValue = rssi;
                             positionHandler.modeFromRssi(state);
-                            // Get response
-                            int response = computeResponse(rssi); // the responce from tsiri
-
+                            int response = state.mode;
+                            //if (rssi < -75) {
+                            //    response = 2;
+                            //}
                             if (response == 0) {
                                 changeState(PROTECTED_STATE);
                             } else if (response == 1) {

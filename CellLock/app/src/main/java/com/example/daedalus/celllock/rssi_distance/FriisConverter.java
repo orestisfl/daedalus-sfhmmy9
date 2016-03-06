@@ -26,23 +26,8 @@ public class FriisConverter implements RssiHandlerI {
 
   public FriisConverter() {
     lastRssiValues = new ArrayList<Integer>();
-    ArrayList<Double> params = new ArrayList<Double>();
-    try {
-        BufferedReader br = new BufferedReader(new FileReader("model_params.txt"));
-        String line;
-        while ((line = br.readLine()) != null) {
-          params.add(Double.parseDouble(line));
-        }
-    }
-    catch (IOException e) {
-      Log.e("FriisConverter", "File 'model_params.txt' not found!");
-    }
-    if (params.size() != 3) {
-      Log.e("FriisConverter", "'model_params.txt' did not contain 3 double parameters");
-    }
-    A = params.get(0);
-    B = params.get(1);
-    C = params.get(2);
+    A = 7.099 * Math.pow(10, -7);
+    C = -4.4382 * Math.pow(10, -6);
   }
 
   @Override
@@ -61,11 +46,7 @@ public class FriisConverter implements RssiHandlerI {
   protected double reverseModel(double meanRssi) {
     double power = Math.pow(10, meanRssi / 10);
     double transDist = Math.sqrt(A / (power - C));
-    double distance = -transDist - B;
-    if (distance <= 0) {
-      distance = transDist - B;
-    }
-    return distance;
+    return transDist;
   }
 
   protected double filterRssi() {

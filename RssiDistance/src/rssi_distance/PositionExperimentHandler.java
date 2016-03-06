@@ -9,9 +9,9 @@ public class PositionExperimentHandler implements PositionHandlerI {
 
   private PrintWriter writer;
 
-  public PositionExperimentHandler(ArrayList<String> filename)
+  public PositionExperimentHandler(String filename)
       throws FileNotFoundException, UnsupportedEncodingException {
-    writer = new PrintWriter(filename.get(0), "UTF-8");
+    writer = new PrintWriter(filename, "UTF-8");
   }
 
   public void closeWriter() {

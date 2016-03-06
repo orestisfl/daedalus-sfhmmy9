@@ -1,24 +1,22 @@
 package rssi_distance;
 
-import java.util.ArrayList;
-
 public class PositionHandlerFactory {
 
-  public PositionHandlerFactory() {
-  }
-
-  public PositionHandlerI spawnPositionHandler(String type, ArrayList<String> args) {
+  static public PositionHandlerI spawnPositionHandler(String type, String arg) {
+    if (type == null) {
+      return null;
+    }
     try {
-      switch (type) {
-        case "experiment":
-          return new PositionExperimentHandler(args);
-        case "true":
-          return new ProtectionHandler();
+      if (type.equalsIgnoreCase("experiment")) {
+        return new PositionExperimentHandler(arg);
+      }
+      else if (type.equalsIgnoreCase("real")) {
+        return new ProtectionHandler();
       }
     }
     catch (Exception e) {
-      Log.w("File not found in experiment");
     }
     return null;
   }
+
 }

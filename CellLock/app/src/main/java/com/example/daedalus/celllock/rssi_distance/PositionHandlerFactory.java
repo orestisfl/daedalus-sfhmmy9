@@ -7,16 +7,19 @@ import java.util.ArrayList;
 public class PositionHandlerFactory {
 
   static public PositionHandlerI spawnPositionHandler(String type, String arg) {
+    if (arg == null) {
+      return null;
+    }
     try {
-      switch (type) {
-        case "experiment":
-          return new PositionExperimentHandler(arg);
-        case "true":
+      if (type.equalsIgnoreCase("experiment")) {
+        return new PositionExperimentHandler(arg);
+      }
+      else if (type.equalsIgnoreCase("real")) {
           return new ProtectionHandler();
       }
     }
     catch (Exception e) {
-      Log.w("PositionHandlerFactory", "File not found in experiment");
+      // Log.w("PositionHandlerFactory", "File not found in experiment");
     }
     return null;
   }

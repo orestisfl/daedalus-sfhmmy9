@@ -3,7 +3,7 @@ package com.example.daedalus.celllock.rssi_distance;
 public class ProtectionHandler implements PositionHandlerI {
 
   protected RssiHandlerI rssiHandler;
-  protected State.ProtectionMode lastMode;
+  protected int lastMode;
   protected double lastDistance;
   protected double lastTime;
   protected int counterRssi;
@@ -22,7 +22,7 @@ public class ProtectionHandler implements PositionHandlerI {
 
   public ProtectionHandler() {
     rssiHandler = new FriisConverter();
-    lastMode = State.ProtectionMode.NORMAL;
+    lastMode = State.NORMAL;
     firstTimeInNormalTime = true;
     firstTimeInNormalDistance = true;
     counterRssi = 0;
@@ -36,7 +36,7 @@ public class ProtectionHandler implements PositionHandlerI {
 
   @Override
   public void setToNormalMode() {
-    lastMode = State.ProtectionMode.NORMAL;
+    lastMode = State.NORMAL;
     firstTimeInNormalTime = true;
     firstTimeInNormalDistance = true;
     counterRssi = 0;
@@ -46,7 +46,7 @@ public class ProtectionHandler implements PositionHandlerI {
 	public boolean modeFromRssi(State state) {
 	  double currentTime = System.currentTimeMillis();
 
-	  if (lastMode == State.ProtectionMode.DANGER) {
+	  if (lastMode == State.DANGER) {
 	    state.mode = lastMode;
 	    return true;
     }
@@ -68,24 +68,24 @@ public class ProtectionHandler implements PositionHandlerI {
       }
 	    double relativeDistance = Math.abs(currentDistance - lastDistance);
 	    if (relativeDistance > relativeDistThres) {
-	      if (lastMode != State.ProtectionMode.WARNING)
+	      if (lastMode != State.WARNING)
           firstTimeInWarning = currentTime;
-	      lastMode = State.ProtectionMode.WARNING;
+	      lastMode = State.WARNING;
       }
       else if (currentDistance < maxDistanceThres) {
-        lastMode = State.ProtectionMode.NORMAL;
+        lastMode = State.NORMAL;
       }
       else {
-        lastMode = State.ProtectionMode.DANGER;
+        lastMode = State.DANGER;
       }
-      if (lastMode != State.ProtectionMode.WARNING)
+      if (lastMode != State.WARNING)
         lastDistance = currentDistance;
       lastTime = currentTime;
     }
 
-    if (lastMode == State.ProtectionMode.WARNING) {
+    if (lastMode == State.WARNING) {
       if (currentTime - firstTimeInWarning > maxTimeInWarning) {
-        lastMode = State.ProtectionMode.DANGER;
+        lastMode = State.DANGER;
       }
     }
 

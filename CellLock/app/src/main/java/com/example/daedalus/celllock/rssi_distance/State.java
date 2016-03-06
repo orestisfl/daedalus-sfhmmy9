@@ -1,9 +1,9 @@
 package com.example.daedalus.celllock.rssi_distance;
 
 public class State {
-  public enum ProtectionMode {
-    NORMAL, WARNING, DANGER
-  }
+  public final static int NORMAL = 0;
+  public final static int WARNING = 1;
+  public final static int DANGER = 2;
   public int rssiValue;
-  public ProtectionMode mode;
+  public int mode;
 }
