@@ -84,6 +84,8 @@ void interruptBluetooth() {
     BTSerial.write("C");
     while (checkBT()) {
         String command = readBT();
+        Serial.println("Received command:");
+        Serial.println(command);
         if (command == "RING") {
             playRing = true;
         } else if (command == "SEMI") {
