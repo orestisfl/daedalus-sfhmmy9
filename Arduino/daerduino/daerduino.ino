@@ -57,10 +57,17 @@ String readBT() {
     while (true) { // While there is more to be read, keep reading.
         if (checkBT()) {
             char c = (char)BTSerial.read();
-            if (c == ';' || response == "OK") return response;
+            if (c == ';') return response;
+            Serial.println("readBT() got char:");
+            Serial.println(c);
             response += c;
+            if (response == "OK") return response;
             currentTime = millis();
-        } else if (millis() - currentTime > BT_TIMEOUT_MILLIS) return "";
+        } else if (millis() - currentTime > BT_TIMEOUT_MILLIS) {
+            Serial.println("readBT() timed-out. Current response:");
+            Serial.println(response);
+            return "";
+        }
     }
 }
 
