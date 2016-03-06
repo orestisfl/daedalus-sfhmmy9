@@ -2,7 +2,6 @@
 SoftwareSerial BTSerial(4, 2); // RX, TX
 
 #include <TimerOne.h>
-
 typedef unsigned long Millis;
 
 // the pin that the pushbutton is attached to.
@@ -13,9 +12,6 @@ typedef unsigned long Millis;
 #define BUZZER_PIN 6
 #define BT_TIMEOUT_MILLIS 50
 #define INTERRUPT_FREQUENCY_MICROS 1500000
-
-int emergencyPressesCount = 0;
-unsigned long startTime = 0;
 
 typedef enum {STATE_OFF, STATE_PROTECTED, STATE_SEMI, STATE_DANGER} State;
 volatile State currentState;
@@ -76,24 +72,11 @@ String readBTNonBlocking() {
     return response;
 }
 
-bool isConnected() {
-    BTSerial.write("AT");
-    delay(600);  // it needs a huge delay.
-    String response = readBTNonBlocking();
-    return response != "OK";
-}
-
 void interruptBluetooth() {
     Serial.println("Interrupted:");
     // Read received data if available.
     noInterrupts();
-    if (isConnected()) {
-        Serial.println("CONNECTED sent to pair.");
-        BTSerial.write("CONNECTED");
-    } else {
-        Serial.println("No connection to send to pair.");
-        return;
-    }
+    BTSerial.write("CONNECTED");
     while (checkBT()) {
         String command = readBT();
         if (command == "RING") {
