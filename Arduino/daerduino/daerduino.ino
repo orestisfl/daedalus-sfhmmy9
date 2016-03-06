@@ -92,6 +92,7 @@ String readBTNonBlocking() {
 }
 
 void interruptBluetooth() {
+    // interrupt was called
     Serial.println("-----------------------------Interrupted----------------------------------------");
     // Read received data if available.
     noInterrupts();

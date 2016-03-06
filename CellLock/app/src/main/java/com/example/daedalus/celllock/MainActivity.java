@@ -55,10 +55,10 @@ public class MainActivity extends Activity {
     private static final int DANGER_STATE = 10;
     private static final int DISCONNECTED_STATE = 11;
     public int prevState = 0;
-    public MediaPlayer mPlayer ;
+    public MediaPlayer mPlayer;
 
-    private static final String CONNECTED_DEVICE_NAME ="Peinaw";
-    private static final String DISCOVERY_DEVICE_NAME ="Orestis";
+    private static final String CONNECTED_DEVICE_NAME = "Peinaw";
+    private static final String DISCOVERY_DEVICE_NAME = "Orestis";
     private BluetoothDevice connectionDevice;
     //private BluetoothDevice discoveryDevice;
     private ConnectedThread connectedThread;
@@ -67,18 +67,17 @@ public class MainActivity extends Activity {
     String tag = "debugging";
 
 
-
-    Handler mHandler = new Handler()  {
+    Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             // TODO Auto-generated method stub
             Log.i(tag, "in handler");
             super.handleMessage(msg);
-            switch(msg.what){
+            switch (msg.what) {
                 case SUCCESS_CONNECT:
                     // when you connect to a device restart discovery in order to search for other
                     // devices
-                    connectedThread = new ConnectedThread((BluetoothSocket)msg.obj);
+                    connectedThread = new ConnectedThread((BluetoothSocket) msg.obj);
 
                     // State changes to Connected State;
                     changeState(CONNECTED_STATE);
@@ -87,13 +86,13 @@ public class MainActivity extends Activity {
                     //String temp = connectedThread.readData(getApplicationContext());
 
                     //if(temp==null){
-                   //     changeState(DISCONNECTED_STATE);
-                  //  }
+                    //     changeState(DISCONNECTED_STATE);
+                    //  }
 
                     //Check thn malakia mas
                     break;
                 case MESSAGE_READ:
-                    byte[] readBuf = (byte[])msg.obj;
+                    byte[] readBuf = (byte[]) msg.obj;
                     String string = new String(readBuf);
                     Toast.makeText(getApplicationContext(), string, Toast.LENGTH_SHORT).show();
                     break;
@@ -102,19 +101,17 @@ public class MainActivity extends Activity {
     };
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        textView = (TextView)findViewById(R.id.debuggText);
+        textView = (TextView) findViewById(R.id.debuggText);
         init();
 
-        if(btAdapter==null){
+        if (btAdapter == null) {
             Toast.makeText(getApplicationContext(), "No bluetooth detected", Toast.LENGTH_SHORT).show();
             finish();
-        }
-        else {
+        } else {
             if (!btAdapter.isEnabled()) {
                 turnOnBT();
             }
@@ -157,55 +154,54 @@ public class MainActivity extends Activity {
     private void getPairedDevices() {
         // TODO Auto-generated method stub
         devicesArray = btAdapter.getBondedDevices();
-        if(devicesArray.size()>0){
-            for(BluetoothDevice device:devicesArray){
+        if (devicesArray.size() > 0) {
+            for (BluetoothDevice device : devicesArray) {
                 pairedDevices.add(device.getName());
 
             }
         }
     }
+
     // Rendering Functions
-    public void renderToProtected()
-    {
-        ImageView imgShield=(ImageView)findViewById(R.id.imageViewShield);
-        ImageView imgDanger=(ImageView)findViewById(R.id.imageViewDanger);
-        ImageView imgWarning=(ImageView)findViewById(R.id.imageViewWarning);
-        ImageView imgBell=(ImageView)findViewById(R.id.imageViewBell);
+    public void renderToProtected() {
+        ImageView imgShield = (ImageView) findViewById(R.id.imageViewShield);
+        ImageView imgDanger = (ImageView) findViewById(R.id.imageViewDanger);
+        ImageView imgWarning = (ImageView) findViewById(R.id.imageViewWarning);
+        ImageView imgBell = (ImageView) findViewById(R.id.imageViewBell);
         imgBell.setVisibility(ImageView.INVISIBLE);
         imgWarning.setVisibility(ImageView.INVISIBLE);
         imgDanger.setVisibility(ImageView.INVISIBLE);
         imgShield.setVisibility(ImageView.VISIBLE);
     }
-    public void renderToDanger()
-    {
-        ImageView imgShield=(ImageView)findViewById(R.id.imageViewShield);
-        ImageView imgDanger=(ImageView)findViewById(R.id.imageViewDanger);
-        ImageView imgWarning=(ImageView)findViewById(R.id.imageViewWarning);
-        ImageView imgBell=(ImageView)findViewById(R.id.imageViewBell);
+
+    public void renderToDanger() {
+        ImageView imgShield = (ImageView) findViewById(R.id.imageViewShield);
+        ImageView imgDanger = (ImageView) findViewById(R.id.imageViewDanger);
+        ImageView imgWarning = (ImageView) findViewById(R.id.imageViewWarning);
+        ImageView imgBell = (ImageView) findViewById(R.id.imageViewBell);
         imgWarning.setVisibility(ImageView.INVISIBLE);
         imgBell.setVisibility(ImageView.INVISIBLE);
         imgShield.setVisibility(ImageView.INVISIBLE);
         imgDanger.setVisibility(ImageView.VISIBLE);
 
     }
-    public void renderToWarning()
-    {
-        ImageView imgShield=(ImageView)findViewById(R.id.imageViewShield);
-        ImageView imgDanger=(ImageView)findViewById(R.id.imageViewDanger);
-        ImageView imgWarning=(ImageView)findViewById(R.id.imageViewWarning);
-        ImageView imgBell=(ImageView)findViewById(R.id.imageViewBell);
+
+    public void renderToWarning() {
+        ImageView imgShield = (ImageView) findViewById(R.id.imageViewShield);
+        ImageView imgDanger = (ImageView) findViewById(R.id.imageViewDanger);
+        ImageView imgWarning = (ImageView) findViewById(R.id.imageViewWarning);
+        ImageView imgBell = (ImageView) findViewById(R.id.imageViewBell);
         imgBell.setVisibility(ImageView.INVISIBLE);
         imgDanger.setVisibility(ImageView.INVISIBLE);
         imgShield.setVisibility(ImageView.INVISIBLE);
         imgWarning.setVisibility(ImageView.VISIBLE);
     }
 
-    public void renderToBell()
-    {
-        ImageView imgShield=(ImageView)findViewById(R.id.imageViewShield);
-        ImageView imgDanger=(ImageView)findViewById(R.id.imageViewDanger);
-        ImageView imgWarning=(ImageView)findViewById(R.id.imageViewWarning);
-        ImageView imgBell=(ImageView)findViewById(R.id.imageViewBell);
+    public void renderToBell() {
+        ImageView imgShield = (ImageView) findViewById(R.id.imageViewShield);
+        ImageView imgDanger = (ImageView) findViewById(R.id.imageViewDanger);
+        ImageView imgWarning = (ImageView) findViewById(R.id.imageViewWarning);
+        ImageView imgBell = (ImageView) findViewById(R.id.imageViewBell);
         imgWarning.setVisibility(ImageView.INVISIBLE);
         imgShield.setVisibility(ImageView.INVISIBLE);
         imgDanger.setVisibility(ImageView.INVISIBLE);
@@ -257,24 +253,23 @@ public class MainActivity extends Activity {
                             e.printStackTrace();
                         }
                         String temp = connectedThread.readData(getApplicationContext());
-                       // textView.setText(temp);
+                        // textView.setText(temp);
 
-                        if(temp==null){
-                             changeState(DISCONNECTED_STATE);
-                         }
-                        else if(temp.contains("RING")){
+                        if (temp == null) {
+                            changeState(DISCONNECTED_STATE);
+                        } else if (temp.contains("RING")) {
                             playAlarm();
                         }
 
                         if (device.getName().equals(DISCOVERY_DEVICE_NAME)) {
                             //discoveryDevice = device;
-                            Toast.makeText(getApplicationContext()," Discovery device found " , Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), " Discovery device found ", Toast.LENGTH_SHORT).show();
                             rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
-                            textView.setText(""+rssi);
+                            textView.setText("" + rssi);
                             //Send rssi
                             // Get response
                             int response = 0; // the responce from tsiri
-                            if(rssi<-75){
+                            if (rssi < -75) {
                                 response = 2;
                             }
                             if (response == 0) {
@@ -298,10 +293,9 @@ public class MainActivity extends Activity {
                     //Toast.makeText(getApplicationContext(), " DiscoveryStarted ", Toast.LENGTH_SHORT).show();
                 } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                     // VERY VERY IMPORTANT
-                    if (state == PROTECTED_STATE||state==WARNING_STATE) {
+                    if (state == PROTECTED_STATE || state == WARNING_STATE) {
                         btAdapter.startDiscovery();
                     }
-
 
 
                 } else if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
@@ -329,23 +323,20 @@ public class MainActivity extends Activity {
     }
 
 
-    private void changeState(int s){
+    private void changeState(int s) {
         int temp = prevState;
         prevState = state;
         state = s;
-        if(state==PROTECTED_STATE){
+        if (state == PROTECTED_STATE) {
             renderToProtected();
             connectedThread.write("PON;".getBytes());
-        }
-        else if(state==CONNECTED_STATE){
+        } else if (state == CONNECTED_STATE) {
             renderToWarning();
             connectedThread.write("POFF;".getBytes());
-        }
-        else if(state==WARNING_STATE){
+        } else if (state == WARNING_STATE) {
             renderToWarning();
             connectedThread.write("SEMI;".getBytes());
-        }
-        else if(state==DANGER_STATE){
+        } else if (state == DANGER_STATE) {
 
             playAlarm();
             connectedThread.write("DANG;".getBytes());
@@ -354,14 +345,13 @@ public class MainActivity extends Activity {
             connectedThread.cancel();
             startActivity(intent);
 
-        }
-        else if (state==DISCONNECTED_STATE ){
+        } else if (state == DISCONNECTED_STATE) {
             //&& temp != CONNECTED_STATE && temp !=INIT_STATE
             changeState(DANGER_STATE);
 
         }
         //textView.clearComposingText();
-      //  textView.setText(""+state);
+        //  textView.setText(""+state);
 
     }
 
@@ -370,12 +360,12 @@ public class MainActivity extends Activity {
 
     private void turnOnBT() {
         // TODO Auto-generated method stub
-        Intent intent =new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         startActivityForResult(intent, 1);
     }
 
 
-    public void connectButton(View view){
+    public void connectButton(View view) {
         getPairedDevices();
         startDiscovery();
 
@@ -383,53 +373,47 @@ public class MainActivity extends Activity {
     }
 
 
-    public void protectionButton(View view){
-        if(state == INIT_STATE){
-            Toast.makeText(getApplicationContext(),"You MUST connect to get on protection mode",Toast.LENGTH_LONG).show();
+    public void protectionButton(View view) {
+        if (state == INIT_STATE) {
+            Toast.makeText(getApplicationContext(), "You MUST connect to get on protection mode", Toast.LENGTH_LONG).show();
 
-        }
-        else if(state==CONNECTED_STATE){
+        } else if (state == CONNECTED_STATE) {
             changeState(PROTECTED_STATE);
-            Toast.makeText(getApplicationContext(),"Protection Mode Enabled",Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Protection Mode Enabled", Toast.LENGTH_LONG).show();
 
             // start discovery mode
             startDiscovery();
-        }
-        else if(state==PROTECTED_STATE){
-            Toast.makeText(getApplicationContext(),"You are in protection mode",Toast.LENGTH_LONG).show();
+        } else if (state == PROTECTED_STATE) {
+            Toast.makeText(getApplicationContext(), "You are in protection mode", Toast.LENGTH_LONG).show();
         }
     }
 
 
-    public void disableProtection(View view){
-        if(state==PROTECTED_STATE){
+    public void disableProtection(View view) {
+        if (state == PROTECTED_STATE) {
             changeState(CONNECTED_STATE);
             btAdapter.cancelDiscovery();
-            Toast.makeText(getApplicationContext(),"You are not protected anymore",Toast.LENGTH_LONG).show();
-        }
-        else{
+            Toast.makeText(getApplicationContext(), "You are not protected anymore", Toast.LENGTH_LONG).show();
+        } else {
 
         }
     }
 
-    public void ringButton(View view){
+    public void ringButton(View view) {
 
-        if(mPlayer.isPlaying()){
+        if (mPlayer.isPlaying()) {
             mPlayer.stop();
-        }
-        else if(state == PROTECTED_STATE || state == CONNECTED_STATE){
+        } else if (state == PROTECTED_STATE || state == CONNECTED_STATE) {
             String s = "RING;";
             connectedThread.write(s.getBytes());
             renderToBell();
             changeState(FINDARDUINO_STATE);
 
 
-        }
-        else if(state == INIT_STATE){
+        } else if (state == INIT_STATE) {
             textView.clearComposingText();
             Toast.makeText(getApplicationContext(), "You must Connect first to find your keys", Toast.LENGTH_SHORT).show();
-        }
-        else if(state == FINDARDUINO_STATE){
+        } else if (state == FINDARDUINO_STATE) {
             String s = "RSTOP;";
             connectedThread.write(s.getBytes());
             Toast.makeText(getApplicationContext(), "Congrats you found your fucking keys", Toast.LENGTH_SHORT).show();
@@ -472,11 +456,13 @@ public class MainActivity extends Activity {
                 // until it succeeds or throws an exception
                 mmSocket.connect();
                 Log.i(tag, "connect - succeeded");
-            } catch (IOException connectException) {	Log.i(tag, "connect failed");
+            } catch (IOException connectException) {
+                Log.i(tag, "connect failed");
                 // Unable to connect; close the socket and get out
                 try {
                     mmSocket.close();
-                } catch (IOException closeException) { }
+                } catch (IOException closeException) {
+                }
                 return;
             }
 
@@ -486,12 +472,14 @@ public class MainActivity extends Activity {
         }
 
 
-
-        /** Will cancel an in-progress connection, and close the socket */
+        /**
+         * Will cancel an in-progress connection, and close the socket
+         */
         public void cancel() {
             try {
                 mmSocket.close();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+            }
         }
     }
 
@@ -516,7 +504,8 @@ public class MainActivity extends Activity {
             try {
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+            }
 
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
@@ -554,34 +543,35 @@ public class MainActivity extends Activity {
         }
 
 
-        public String read(byte[] bytes){
+        public String read(byte[] bytes) {
 
             strInput = null;
             try {
                 mmInStream.read(bytes);
                 strInput = new String(bytes);
                 //strInput = new String(bytes);
-            }catch(IOException e){
+            } catch (IOException e) {
                 changeState(DISCONNECTED_STATE);
             }
             return strInput;
         }
 
 
-        private boolean isBluetoothAvailable(){
+        private boolean isBluetoothAvailable() {
             return btAdapter.isEnabled();
 
         }
-        private void turnBluetoothOn(){
+
+        private void turnBluetoothOn() {
 
             btAdapter.enable();
         }
 
-        public String readData(Context context){
-            String outputString=null;
-            if(isBluetoothAvailable()) {
+        public String readData(Context context) {
+            String outputString = null;
+            if (isBluetoothAvailable()) {
                 outputString = connectedThread.read(buffer);
-            }else{
+            } else {
                 Toast.makeText(context, "Error: Not Connected", Toast.LENGTH_LONG).show();
             }
             return outputString;
@@ -592,7 +582,8 @@ public class MainActivity extends Activity {
         public void cancel() {
             try {
                 mmSocket.close();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+            }
         }
     }
 }
