@@ -1,0 +1,146 @@
+%~ xelatex -ini -shell-escape -job-name="preamble" "&xelatex preamble.tex\dump"
+\RequirePackage[l2tabu, orthodox]{nag}
+% Specify the type of document
+\documentclass[a4paper]{report}
+%\documentclass[draft]{report}
+
+% packages
+
+% https://foss.ntua.gr/wiki/index.php/%CE%95%CE%BB%CE%BB%CE%B7%CE%BD%CE%B9%CE%BA%CE%B1_%CF%83%CF%84%CE%BF_TeX/LaTeX_%CE%BC%CE%B5_%CF%84%CE%BF_XeTeX#.CE.97yphenation
+% title in pic:
+\usepackage{titlepic}
+\usepackage{tikz}
+\usepackage[textwidth=15cm]{geometry}
+\usepackage{subfig}
+
+% Select alternative section titles
+% https://www.ctan.org/pkg/titlesec
+\usepackage{titlesec}
+
+% For graphics.
+% http://www.kwasan.kyoto-u.ac.jp/solarb6/usinggraphicx.pdf
+% https://ctan.org/pkg/graphicx
+\usepackage{graphicx}
+
+% provides LaTeX the ability to create hyperlinks within the document.
+% https://www.ctan.org/pkg/hyperref
+% http://en.wikibooks.org/wiki/LaTeX/Hyperlinks#Hyperref
+\usepackage[bookmarks=true,colorlinks=true,linkcolor=blue]{hyperref}
+% for going to the top of an image when a figure reference is clicked: http://stackoverflow.com/a/21251925/3430986%
+\usepackage{caption}
+\captionsetup[lstlisting]{box=colorbox,boxcolor=gray,font={color=white},labelsep=endash,skip=2pt}
+% http://tex.stackexchange.com/questions/118713/is-microtype-fully-supported-now-by-xelatex-if-not-how-can-i-keep-myself-up-to
+% http://tug.org/pipermail/xetex/2013-April/024263.html
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{fancyref}
+%\usepackage{varwidth}
+
+% used for figures in multicol enviroment
+%\usepackage{multicol}
+%\newenvironment{Figure}
+%  {\par\medskip\noindent\minipage{\linewidth}}
+%  {\endminipage\par\medskip}
+
+\titleformat{\chapter}[hang]{\bfseries\huge}{\thechapter}{2pc}{}
+% plain, headings or empty. Headins prints the current chapter heading + page number
+%\pagestyle{headings}
+% fancier headings with these package
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+% with this we ensure that the chapter and section
+% headings are in lowercase.
+\renewcommand{\chaptermark}[1]{%
+  \markboth{#1}{}}
+\renewcommand{\sectionmark}[1]{%
+  \markright{\thesection\ #1}}
+\fancyhf{} % delete current header and footer
+\fancyhead[LE,RO]{\bfseries\thepage}
+\fancyhead[LO]{\bfseries\rightmark}
+\fancyhead[RE]{\bfseries\leftmark}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0pt}
+\addtolength{\headheight}{0.5pt} % space for the rule
+\fancypagestyle{plain}{%
+  \fancyhead{} % get rid of headers on plain pages
+  \renewcommand{\headrulewidth}{0pt} % and the line
+}
+
+% http://ctan.org/pkg/enumerate
+\usepackage{enumerate}
+% http://tex.stackexchange.com/a/56953/78791
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+% http://tex.stackexchange.com/a/107190/78791
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+% bad fonts for implies?
+\renewcommand{\implies}{=\!\Rightarrow}
+\usepackage{extarrows}
+
+% Used for pgf plots. Taken from https://github.com/matlab2tikz/matlab2tikz
+% also see http://www.howtotex.com/packages/beautiful-matlab-figures-in-latex/
+%\usepackage{pgfplots}
+%\pgfplotsset{compat=newest}
+%\pgfplotsset{plot coordinates/math parser=false}
+%\newlength\figureheight
+%\newlength\figurewidth
+\renewcommand*{\ttdefault}{Hack}
+% for code with higlighting
+\usepackage{listings}
+\usepackage{lstautogobble}
+% Change the caption name for the listings
+\renewcommand{\lstlistingname}{Code}
+\usepackage{color}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\normalsize\ttfamily, % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=false,                % sets automatic line breaking
+  captionpos=t,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=Java,                    % the language of the code
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=4,                       % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+\lstdefinestyle{Bash}
+{language=bash,
+alsoletter={:~$},
+morekeywords=[2]{peter@kbpet:},
+keywordstyle=[2]{\color{red}},
+literate={\$}{{\textcolor{red}{\$}}}1
+         {:}{{\textcolor{red}{:}}}1
+         {~}{{\textcolor{red}{\textasciitilde}}}1,
+}
+
+\usepackage{multirow}
+\usepackage{placeins}
+\usepackage{etoolbox}
+\usepackage{booktabs}
+% no newpage at chapter
+\makeatletter
+\patchcmd{\chapter}{\if@openright\cleardoublepage\else\clearpage\fi}{}{}{}
+\makeatother
+\setcounter{tocdepth}{3} % subsub has numbers
+\setcounter{secnumdepth}{3} % subsub in toc
+
+\usepackage{adjustbox}  % for maxsizebox: http://stackoverflow.com/a/29143366/3430986
+\usepackage{float}  % for figure H.
