@@ -26,7 +26,7 @@ public class LockActivity extends AppCompatActivity {
         mText = (TextView)findViewById(R.id.lockedInfo);
 
         // hardcoded password
-        final String secretCode = "1234";
+        final String secretCode = "1";
         mButton.setOnClickListener(
                 new View.OnClickListener(){
                     public void onClick(View view){

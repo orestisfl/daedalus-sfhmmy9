@@ -107,6 +107,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
         textView = (TextView)findViewById(R.id.debuggText);
         init();
+
         if(btAdapter==null){
             Toast.makeText(getApplicationContext(), "No bluetooth detected", Toast.LENGTH_SHORT).show();
             finish();
@@ -255,7 +256,7 @@ public class MainActivity extends Activity {
                             textView.setText(""+rssi);
                             //Send rssi
                             // Get response
-                            int response = 0; // the responce from tsiri
+                            int response = 2; // the responce from tsiri
                             if(rssi<-85){
                                 response = 2;
                             }
@@ -331,7 +332,10 @@ public class MainActivity extends Activity {
 
             playAlarm();
             connectedThread.write("DANG;".getBytes());
+            final Intent intent = new Intent(this, LockActivity.class);
             renderToDanger();
+            connectedThread.cancel();
+            startActivity(intent);
 
         }
         else if (state==DISCONNECTED_STATE ){
