@@ -26,7 +26,7 @@ public class StartActivity extends Activity {
 
     }
 
-    public void startConnection(View view){
+    public void startConnection(View view) {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }

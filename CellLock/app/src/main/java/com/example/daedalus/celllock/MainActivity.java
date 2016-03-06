@@ -221,7 +221,7 @@ public class MainActivity extends Activity {
 
     // Initialization method
     private void init() {
-        if (MainActivity.mPlayer != null){
+        if (MainActivity.mPlayer != null) {
             MainActivity.mPlayer.stop();
             MainActivity.mPlayer = null;
         }
