@@ -225,6 +225,7 @@ public class MainActivity extends Activity {
 
         // Initialize the first state
         mPlayer = MediaPlayer.create(getApplication(), R.raw.alarm);
+        mPlayer.setLooping(true);
         state = INIT_STATE;
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         pairedDevices = new ArrayList<String>();
