@@ -1,0 +1,23 @@
+\section{Περιγραφή του android app}
+% Backup original figurename command to restore later.
+\let\originalfigurename\figurename
+% Set figurename command.
+\renewcommand{\figurename}{Εικόνα}
+\newcommand{\screenshot}[2]{%
+\begin{figure}[H]
+\centering%
+\maxsizebox{\linewidth}{0.3\textheight}{\includegraphics[keepaspectratio]{screenshots/#1}}%
+\caption{#2}%
+\label{fig:#1}%
+\end{figure}%
+}
+
+\screenshot{bluetooth-open}{Ερώτηση για άνοιγμα bluetooth}
+\screenshot{not-connected}{Κατάσταση χωρίς σύνδεση με τα bluetooth του κυκλώματος}
+\screenshot{not-protected}{Κατάσταση χωρίς προστασία}
+\screenshot{protected}{Κατάσταση με προστασία}
+\screenshot{ring}{Κατάσταση αναπαραγωγής ήχου για την εύρεση της συσκευής}
+
+\FloatBarrier
+% Restore figurename command.
+\renewcommand{\figurename}{\originalfigurename}
