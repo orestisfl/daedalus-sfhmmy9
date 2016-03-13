@@ -25,7 +25,7 @@
 
 \item Η συνάρτηση \lstinline[language=C++]!String readBT()! διαβάζει χαρακτήρες από το bluetooth μέχρι να συναντήσει τον χαρακτήρα \lstinline[language=C++]!';'!.
 
-\item Η συνάρτηση \lstinline[language=C++]!void interruptBluetooth()! καλείται σαν timer interrupt
+\item \sloppy Η συνάρτηση \lstinline[language=C++]!void interruptBluetooth()! καλείται σαν timer interrupt
 κάθε \lstinline[language=C++]!INTERRUPT_FREQUENCY_MICROS! \si{\micro\second}
 και στέλνει στη συνδεδεμένη συσκευή android τον χαρακτήρα \lstinline[language=C++]!"C"! ώστε να επιβεβαιωθεί η σύνδεση και διαβάζει τις εντολές που στέλνει η συσκευή android.
 Οι διαθέσιμες εντολές είναι:
