@@ -4,23 +4,25 @@
 % Set figurename command.
 \renewcommand{\figurename}{Εικόνα}
 \newcommand{\screenshot}[2]{%
-\begin{figure}[H]
+\begin{subfigure}{0.5\textwidth}%
 \centering%
-\maxsizebox{\linewidth}{0.3\textheight}{\includegraphics[keepaspectratio]{screenshots/#1}}%
-\caption{#2}%
+\includegraphics[keepaspectratio, width=0.4\textwidth]{screenshots/#1}%
+\caption{#2}
 \label{fig:#1}%
-\end{figure}%
+\end{subfigure}%
 }
 
-\screenshot{start}{Αρχική οθόνη}
-\screenshot{locked}{Οθόνη για εισαγωγή κωδικού για ξεκλείδωμα}
-\screenshot{bluetooth-open}{Ερώτηση για άνοιγμα bluetooth}
-\screenshot{not-connected}{Κατάσταση χωρίς σύνδεση με τα bluetooth του κυκλώματος}
-\screenshot{not-protected}{Κατάσταση χωρίς προστασία}
-\screenshot{protected}{Κατάσταση με προστασία}
-\screenshot{ring}{Κατάσταση αναπαραγωγής ήχου για την εύρεση της συσκευής}
+\begin{figure}[htbp]
+        \screenshot{start}{Αρχική οθόνη}%
+        \screenshot{locked}{Οθόνη για εισαγωγή κωδικού για ξεκλείδωμα}
+        \screenshot{bluetooth-open}{Ερώτηση για άνοιγμα bluetooth}%
+        \screenshot{not-connected}{Κατάσταση χωρίς σύνδεση με τα bluetooth του κυκλώματος}
+        \screenshot{not-protected}{Κατάσταση χωρίς προστασία}%
+        \screenshot{protected}{Κατάσταση με προστασία}
+        \screenshot{ring}{Κατάσταση αναπαραγωγής ήχου για την εύρεση της συσκευής}
+        \caption{Οι διάφορες καταστάσεις της εφαρμογής}
+\end{figure}
 
-\FloatBarrier
 Για την ανάπτυξη της εφαρμογής μας χρησιμοποιήθηκε το android studio και το αντίστοιχο API για Bluetooth.
 Παρακάτω υπάρχουν κάποια επιμέρους ζητήματα που αναλύονται περισσότερο.
 
@@ -53,7 +55,7 @@
 Τα states καθώς και οι μεταβάσεις φαίνονται στο
 \renewcommand{\figurename}{Σχήμα}
 \hyperref[fig:stdiag]{\figurename{} \ref{fig:stdiag}}.
-\begin{figure}[htb]
+\begin{figure}[H]
     \centering
     \includegraphics[keepaspectratio, width=\linewidth]{images/state-diagram}
     \caption{Το διάγραμμα καταστάσεων}
