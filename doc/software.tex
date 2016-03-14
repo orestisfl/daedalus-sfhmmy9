@@ -1,32 +1,8 @@
-\section{Περιγραφή του android app}
-% Backup original figurename command to restore later.
-\let\originalfigurename\figurename
-% Set figurename command.
-\renewcommand{\figurename}{Εικόνα}
-\newcommand{\screenshot}[2]{%
-\begin{subfigure}{0.5\textwidth}%
-\centering%
-\includegraphics[keepaspectratio, width=0.4\textwidth]{screenshots/#1}%
-\caption{#2}
-\label{fig:#1}%
-\end{subfigure}%
-}
-
-\begin{figure}[htbp]
-        \screenshot{start}{Αρχική οθόνη}%
-        \screenshot{locked}{Οθόνη για εισαγωγή κωδικού για ξεκλείδωμα}
-        \screenshot{bluetooth-open}{Ερώτηση για άνοιγμα bluetooth}%
-        \screenshot{not-connected}{Κατάσταση χωρίς σύνδεση με τα bluetooth του κυκλώματος}
-        \screenshot{not-protected}{Κατάσταση χωρίς προστασία}%
-        \screenshot{protected}{Κατάσταση με προστασία}
-        \screenshot{ring}{Κατάσταση αναπαραγωγής ήχου για την εύρεση της συσκευής}
-        \caption{Οι διάφορες καταστάσεις της εφαρμογής}
-\end{figure}
-
+\subsection{Περιγραφή του android app}
 Για την ανάπτυξη της εφαρμογής μας χρησιμοποιήθηκε το android studio και το αντίστοιχο API για Bluetooth.
 Παρακάτω υπάρχουν κάποια επιμέρους ζητήματα που αναλύονται περισσότερο.
 
-\subsection{Ισχύς Ζεύξης Συσκευών}
+\subsubsection{Ισχύς Ζεύξης Συσκευών}
 Βασική απαίτηση της εφαρμογής μας ήταν να έχει την δυνατότητα εκτίμησης της απόστασης.
 Το API του Android όμως δεν δίνει την τιμή RSSI (Received Signal Strength Indication) όταν είναι συνδεδεμένο ένα κινητό με ένα bluetooth.
 Η τιμή του rssi δίνεται μόνο κατά την διαδικασία της αναζήτησης συσκευών (discovery) κατά την οποία όμως δεν μπορούμε να βρούμε συσκευές με τις οποίες ήμαστε ήδη συνδεδεμένοι.
@@ -50,7 +26,7 @@
 Για τιμές μεταξύ -75dB και -80dB βρισκόμαστε σε κατάσταση πιθανού
 κινδύνου, ενώ σε τιμές μικρότερες από -80dB σε κατάσταση κινδύνου.
 
-\subsection{Λογική του Προγράμματος}
+\subsubsection{Λογική του Προγράμματος}
 Επειδή η εφαρμογή μας πρέπει να λειτουργεί με κάποιου είδους μνήμη στις εισόδους που δέχεται (πάτημα κουμπιών, ισχύς σήματος) χρησιμοποιήθηκε η λογική των states για να δομηθεί το πρόγραμμά μας.
 Τα states καθώς και οι μεταβάσεις φαίνονται στο
 \renewcommand{\figurename}{Σχήμα}
