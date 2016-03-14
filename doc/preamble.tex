@@ -125,3 +125,9 @@ literate={\$}{{\textcolor{red}{\$}}}1
 
 \usepackage{adjustbox}  % for maxsizebox: http://stackoverflow.com/a/29143366/3430986
 \usepackage{float}  % for figure H.
+
+\usepackage[official]{eurosym} % Euros.
+% http://tex.stackexchange.com/a/110979/78791
+\DeclareRobustCommand{\officialeuro}{%
+  \ifmmode\expandafter\text\fi
+  {\fontencoding{U}\fontfamily{eurosym}\selectfont e}}
